@@ -72,7 +72,7 @@ npm install
 ```bash
 cd scripts
 pip install -r requirements.txt
-export ELEVENLABS_API_KEY=your_key_here
+export ELEVENLABS_API_KEY="your_key_here"
 
 # Preview what would be generated
 python generate_audio.py --dry-run
