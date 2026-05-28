@@ -37,10 +37,10 @@ ELEVENLABS_API_KEY = os.environ.get("ELEVENLABS_API_KEY", "")
 
 # ElevenLabs voice IDs (these are real pre-made voices)
 VOICE_IDS: dict[str, str] = {
-    "history":     "pNInz6obpgDQGcFmaJgB",  # Adam — warm, authoritative
-    "food":        "EXAVITQu4vr4xnSDxMaL",  # Bella — warm, enthusiastic
-    "sightseeing": "TxGEqnHWrfWFTfGW9XjX",  # Josh — energetic
-    "local":       "MF3mGyEYCl7XYWbV9V6O",  # Elli — intimate, conversational
+    "history":     "JBFqnCBsd6RMkjVDRZzb",  # George — warm, captivating storyteller
+    "food":        "EXAVITQu4vr4xnSDxMaL",  # Sarah/Bella — warm, professional
+    "sightseeing": "IKne3meq5aSn9XLyUdCD",  # Charlie — deep, confident, energetic
+    "local":       "pFZP5JQG7iQjIQuC4Bku",  # Lily — velvety actress, conspiratorial
 }
 
 # Voice settings per mode — lower stability = more expressive
