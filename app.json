@@ -1,23 +1,40 @@
 {
   "expo": {
-    "name": "runcast",
+    "name": "RunCast",
     "slug": "runcast",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "com.runcast.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "RunCast uses your location to trigger audio commentary as you run past landmarks.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "RunCast uses your location in the background to trigger audio commentary during your run.",
+        "UIBackgroundModes": ["location", "audio"]
+      }
     },
     "android": {
+      "package": "com.runcast.app",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "backgroundColor": "#0f0f0f",
+        "foregroundImage": "./assets/adaptive-icon.png"
       },
-      "predictiveBackGestureEnabled": false
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION"
+      ]
     },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "RunCast uses location to play audio commentary as you run past landmarks."
+        }
+      ]
+    ],
     "web": {
       "favicon": "./assets/favicon.png"
     }
