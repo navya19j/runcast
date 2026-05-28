@@ -15,7 +15,7 @@
         "UIBackgroundModes": ["location", "audio"]
       },
       "config": {
-        "googleMapsApiKey": "YOUR_IOS_GOOGLE_MAPS_API_KEY"
+        "googleMapsApiKey": "REPLACE_VIA_ENV"
       }
     },
     "android": {
@@ -31,7 +31,7 @@
       ],
       "config": {
         "googleMaps": {
-          "apiKey": "YOUR_ANDROID_GOOGLE_MAPS_API_KEY"
+          "apiKey": "REPLACE_VIA_ENV"
         }
       }
     },
