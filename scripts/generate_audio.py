@@ -1,55 +1,61 @@
 """
 RunCast Audio Generator
 -----------------------
-Reads all POI scripts from the route data and generates MP3 files via ElevenLabs.
+Supports two TTS backends:
 
-Usage:
-    pip install -r requirements.txt
+  ElevenLabs (high quality, requires API key + credits):
     export ELEVENLABS_API_KEY=your_key_here
     python generate_audio.py --route sf_embarcadero --mode all
 
+  edge-tts (free, unlimited, Microsoft neural voices, no account needed):
+    python generate_audio.py --route mumbai_bandra_soul --mode all --backend edge
+
 Voice mapping per mode:
-  history    → Adam   (warm, authoritative male)
-  food       → Bella  (enthusiastic, warm female)
-  sightseeing→ Josh   (energetic, excited male)
-  local      → Elli   (conspiratorial, intimate female)
+  history    → George / en-US-GuyNeural       (warm, authoritative)
+  food       → Sarah  / en-US-JennyNeural     (warm, professional)
+  sightseeing→ Charlie/ en-US-DavisNeural     (energetic)
+  local      → Lily   / en-US-AriaNeural      (expressive, conspiratorial)
 """
 
 import os
 import sys
-import json
+import asyncio
 import argparse
 import re
 from pathlib import Path
 
-try:
-    from elevenlabs.client import ElevenLabs
-    from elevenlabs import VoiceSettings
-except ImportError:
-    print("Install dependencies: pip install -r requirements.txt")
-    sys.exit(1)
-
-# ---------------------------------------------------------------------------
-# Configuration
-# ---------------------------------------------------------------------------
-
 ELEVENLABS_API_KEY = os.environ.get("ELEVENLABS_API_KEY", "")
 
-# ElevenLabs voice IDs (these are real pre-made voices)
+# ElevenLabs pre-made voice IDs
 VOICE_IDS: dict[str, str] = {
     "history":     "JBFqnCBsd6RMkjVDRZzb",  # George — warm, captivating storyteller
-    "food":        "EXAVITQu4vr4xnSDxMaL",  # Sarah/Bella — warm, professional
+    "food":        "EXAVITQu4vr4xnSDxMaL",  # Sarah — warm, professional
     "sightseeing": "IKne3meq5aSn9XLyUdCD",  # Charlie — deep, confident, energetic
     "local":       "pFZP5JQG7iQjIQuC4Bku",  # Lily — velvety actress, conspiratorial
 }
 
-# Voice settings per mode — lower stability = more expressive
-VOICE_SETTINGS: dict[str, VoiceSettings] = {
-    "history":     VoiceSettings(stability=0.40, similarity_boost=0.80, style=0.60, use_speaker_boost=True),
-    "food":        VoiceSettings(stability=0.30, similarity_boost=0.80, style=0.75, use_speaker_boost=True),
-    "sightseeing": VoiceSettings(stability=0.25, similarity_boost=0.80, style=0.80, use_speaker_boost=True),
-    "local":       VoiceSettings(stability=0.35, similarity_boost=0.80, style=0.70, use_speaker_boost=True),
+# edge-tts voice names per mode (free, no account needed)
+EDGE_VOICE_IDS: dict[str, str] = {
+    "history":     "en-US-GuyNeural",      # warm, authoritative male
+    "food":        "en-US-JennyNeural",    # warm, conversational female
+    "sightseeing": "en-US-AndrewNeural",    # confident, engaging male
+    "local":       "en-US-AriaNeural",     # expressive, natural female
 }
+
+# ElevenLabs voice settings per mode
+try:
+    from elevenlabs.client import ElevenLabs
+    from elevenlabs import VoiceSettings
+    VOICE_SETTINGS: dict[str, "VoiceSettings"] = {
+        "history":     VoiceSettings(stability=0.40, similarity_boost=0.80, style=0.60, use_speaker_boost=True),
+        "food":        VoiceSettings(stability=0.30, similarity_boost=0.80, style=0.75, use_speaker_boost=True),
+        "sightseeing": VoiceSettings(stability=0.25, similarity_boost=0.80, style=0.80, use_speaker_boost=True),
+        "local":       VoiceSettings(stability=0.35, similarity_boost=0.80, style=0.70, use_speaker_boost=True),
+    }
+    _ELEVENLABS_AVAILABLE = True
+except ImportError:
+    _ELEVENLABS_AVAILABLE = False
+    VOICE_SETTINGS = {}
 
 # ---------------------------------------------------------------------------
 # Route data — mirrored from TypeScript for Python processing
@@ -379,26 +385,25 @@ ROUTES = {
 }
 
 
-def clean_script(script: str) -> str:
-    """Remove stage direction brackets for cleaner TTS input on some voices."""
-    # ElevenLabs newer models respond to [emotion] tags — keep them
-    # but strip any double spaces
+def clean_script_elevenlabs(script: str) -> str:
+    """Keep [emotion] tags for ElevenLabs; strip double spaces."""
     return re.sub(r" {2,}", " ", script).strip()
 
 
-def generate_clip(client: ElevenLabs, script: str, mode: str, output_path: Path) -> bool:
-    """Generate a single audio clip. Returns True on success."""
-    if output_path.exists():
-        print(f"  ✓ Already exists: {output_path.name}")
-        return True
+def clean_script_edge(script: str) -> str:
+    """Strip all [stage direction] brackets — edge-tts reads them literally."""
+    cleaned = re.sub(r"\[.*?\]", "", script)
+    return re.sub(r" {2,}", " ", cleaned).strip()
 
+
+def generate_clip_elevenlabs(client: "ElevenLabs", script: str, mode: str, output_path: Path) -> bool:
+    """Generate a clip via ElevenLabs. Returns True on success."""
     output_path.parent.mkdir(parents=True, exist_ok=True)
-
     try:
-        print(f"  ⏳ Generating: {output_path.name}")
+        print(f"  ⏳ Generating (ElevenLabs): {output_path.name}")
         audio = client.text_to_speech.convert(
             voice_id=VOICE_IDS[mode],
-            text=clean_script(script),
+            text=clean_script_elevenlabs(script),
             model_id="eleven_multilingual_v2",
             voice_settings=VOICE_SETTINGS[mode],
             output_format="mp3_44100_128",
@@ -413,22 +418,57 @@ def generate_clip(client: ElevenLabs, script: str, mode: str, output_path: Path)
         return False
 
 
+async def _edge_generate(script: str, voice: str, output_path: Path) -> bool:
+    """Async edge-tts generation."""
+    try:
+        import edge_tts
+    except ImportError:
+        print("  edge-tts not installed. Run: pip install edge-tts")
+        return False
+    try:
+        communicate = edge_tts.Communicate(script, voice)
+        await communicate.save(str(output_path))
+        return True
+    except Exception as e:
+        print(f"  ❌ edge-tts failed: {output_path.name} — {e}")
+        return False
+
+
+def generate_clip_edge(script: str, mode: str, output_path: Path) -> bool:
+    """Generate a clip via edge-tts (free, no API key). Returns True on success."""
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    voice = EDGE_VOICE_IDS[mode]
+    print(f"  ⏳ Generating (edge-tts / {voice}): {output_path.name}")
+    success = asyncio.run(_edge_generate(clean_script_edge(script), voice, output_path))
+    if success:
+        print(f"  ✅ Done: {output_path.name}")
+    return success
+
+
 def main():
     parser = argparse.ArgumentParser(description="Generate RunCast audio clips")
     parser.add_argument("--route", default="sf_embarcadero", choices=list(ROUTES.keys()),
                         help="Route to generate audio for. Available: " + ", ".join(ROUTES.keys()))
     parser.add_argument("--mode", default="all", choices=["all", "history", "food", "sightseeing", "local"])
+    parser.add_argument("--backend", default="elevenlabs", choices=["elevenlabs", "edge"],
+                        help="TTS backend: 'elevenlabs' (requires API key) or 'edge' (free, no account)")
     parser.add_argument("--dry-run", action="store_true", help="Print what would be generated without calling the API")
     args = parser.parse_args()
 
-    if not ELEVENLABS_API_KEY and not args.dry_run:
-        print("Error: ELEVENLABS_API_KEY environment variable not set.")
-        print("  export ELEVENLABS_API_KEY=your_key_here")
-        sys.exit(1)
+    if args.backend == "elevenlabs":
+        if not _ELEVENLABS_AVAILABLE:
+            print("Error: elevenlabs package not installed. Run: pip install elevenlabs")
+            sys.exit(1)
+        if not ELEVENLABS_API_KEY and not args.dry_run:
+            print("Error: ELEVENLABS_API_KEY not set. Use --backend edge for free generation.")
+            print("  export ELEVENLABS_API_KEY=your_key_here")
+            print("  or: python generate_audio.py --backend edge ...")
+            sys.exit(1)
+        client = ElevenLabs(api_key=ELEVENLABS_API_KEY) if not args.dry_run else None
+    else:
+        client = None
 
-    client = ElevenLabs(api_key=ELEVENLABS_API_KEY) if not args.dry_run else None
     assets_dir = Path(__file__).parent.parent / "assets" / "audio"
-
     route_data = ROUTES[args.route]
     modes_to_generate = list(VOICE_IDS.keys()) if args.mode == "all" else [args.mode]
 
@@ -442,12 +482,23 @@ def main():
             total += 1
             output_path = assets_dir / clip["audioFile"]
 
+            if output_path.exists():
+                print(f"  ✓ Already exists: {output_path.name}")
+                generated += 1
+                continue
+
             if args.dry_run:
-                print(f"[dry-run] Would generate: {clip['audioFile']} (voice: {mode})")
+                backend_label = args.backend
+                voice = EDGE_VOICE_IDS[mode] if args.backend == "edge" else VOICE_IDS[mode]
+                print(f"[dry-run] Would generate: {clip['audioFile']} ({backend_label} / {voice})")
                 print(f"  Script preview: {clip['script'][:80]}...")
                 continue
 
-            success = generate_clip(client, clip["script"], mode, output_path)
+            if args.backend == "edge":
+                success = generate_clip_edge(clip["script"], mode, output_path)
+            else:
+                success = generate_clip_elevenlabs(client, clip["script"], mode, output_path)
+
             if success:
                 generated += 1
 
