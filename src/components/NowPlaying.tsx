@@ -3,6 +3,46 @@ import { View, Text, StyleSheet, Animated } from 'react-native';
 import { AudioState } from '../hooks/useAudio';
 import { Mode } from '../data/types';
 
+// Three animated bars that pulse when narrating — "on air" broadcast indicator
+function WaveformBars({ active }: { active: boolean }) {
+  const bar1 = useRef(new Animated.Value(0.4)).current;
+  const bar2 = useRef(new Animated.Value(0.8)).current;
+  const bar3 = useRef(new Animated.Value(0.55)).current;
+
+  useEffect(() => {
+    if (!active) {
+      [bar1, bar2, bar3].forEach(b =>
+        Animated.timing(b, { toValue: 0.3, duration: 300, useNativeDriver: false }).start(),
+      );
+      return;
+    }
+    const pulse = (bar: Animated.Value, min: number, max: number, duration: number) =>
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(bar, { toValue: max, duration, useNativeDriver: false }),
+          Animated.timing(bar, { toValue: min, duration, useNativeDriver: false }),
+        ]),
+      ).start();
+    pulse(bar1, 0.25, 1.0, 320);
+    pulse(bar2, 0.5,  1.0, 200);
+    pulse(bar3, 0.3,  0.9, 260);
+  }, [active, bar1, bar2, bar3]);
+
+  const HEIGHT = 18;
+  return (
+    <View style={styles.waveform}>
+      {[bar1, bar2, bar3].map((b, i) => (
+        <Animated.View
+          key={i}
+          style={[styles.bar, {
+            height: b.interpolate({ inputRange: [0, 1], outputRange: [4, HEIGHT] }),
+          }]}
+        />
+      ))}
+    </View>
+  );
+}
+
 interface NowPlayingProps {
   audioState: AudioState;
   clipName: string | null;
@@ -46,7 +86,7 @@ export default function NowPlaying({ audioState, clipName, mode }: NowPlayingPro
   return (
     <Animated.View style={[styles.container, { opacity, transform: [{ translateY: slideY }] }]}>
       <View style={styles.pill}>
-        <View style={styles.dot} />
+        <WaveformBars active={audioState === 'narrating'} />
         <View style={styles.textBlock}>
           <Text style={styles.stateLabel}>{STATE_LABELS[audioState]}</Text>
           {clipName && <Text style={styles.clipName}>{clipName}</Text>}
@@ -57,53 +97,68 @@ export default function NowPlaying({ audioState, clipName, mode }: NowPlayingPro
   );
 }
 
+// RunCast's "on air" indicator — broadcast amber, Spotify mini-player structure
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 60,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
+    top: 14,
+    left: 14,
+    right: 14,
     zIndex: 100,
     pointerEvents: 'none',
   },
   pill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(15, 15, 15, 0.88)',
-    paddingHorizontal: 18,
-    paddingVertical: 12,
-    borderRadius: 28,
-    gap: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 10,
-    elevation: 8,
+    backgroundColor: 'rgba(13,12,10,0.93)',
+    paddingLeft: 14,
+    paddingRight: 14,
+    paddingVertical: 11,
+    borderRadius: 12,
+    gap: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(245,166,35,0.30)',
   },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#4CAF50',
+  // Left: animated broadcast bars (three thin rects)
+  waveform: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2.5,
+    width: 18,
+  },
+  bar: {
+    width: 3,
+    borderRadius: 2,
+    backgroundColor: '#F5A623',
+  },
+  dot: {               // unused — kept for type compat, hidden
+    width: 0,
+    height: 0,
+  },
+  dotInner: {
+    width: 0,
+    height: 0,
   },
   textBlock: {
-    gap: 2,
+    flex: 1,
+    gap: 1,
   },
   stateLabel: {
-    color: 'rgba(255,255,255,0.55)',
-    fontSize: 11,
-    fontWeight: '500',
+    color: '#F5A623',
+    fontSize: 9,
+    fontWeight: '700',
     textTransform: 'uppercase',
-    letterSpacing: 0.8,
+    letterSpacing: 1.2,
   },
   clipName: {
     color: '#fff',
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: 14,
+    fontWeight: '700',
+    letterSpacing: -0.2,
   },
   modeLabel: {
-    color: 'rgba(255,255,255,0.45)',
-    fontSize: 11,
+    color: 'rgba(255,255,255,0.38)',
+    fontSize: 10,
+    fontWeight: '500',
   },
 });

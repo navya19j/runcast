@@ -16,11 +16,11 @@ import { useProximity } from './src/hooks/useProximity';
 import SF_EMBARCADERO_ROUTE from './src/data/routes/sf_embarcadero';
 import { Mode, POI, RunState } from './src/data/types';
 
-const MODES: { id: Mode; label: string; emoji: string; description: string }[] = [
-  { id: 'history',    label: 'History',    emoji: '🏛', description: 'The city\'s bones' },
-  { id: 'food',       label: 'Food',       emoji: '🥐', description: 'What to eat after' },
-  { id: 'sightseeing',label: 'Sightseeing',emoji: '📸', description: 'Views & moments' },
-  { id: 'local',      label: 'Local Life', emoji: '🏘', description: 'How SF really lives' },
+const MODES: { id: Mode; label: string; description: string }[] = [
+  { id: 'history',     label: 'History',     description: 'The city\'s bones'    },
+  { id: 'food',        label: 'Food',        description: 'What to eat & drink'  },
+  { id: 'sightseeing', label: 'Sightseeing', description: 'Views & moments'      },
+  { id: 'local',       label: 'Local Life',  description: 'How it really lives'  },
 ];
 
 const ROUTE = SF_EMBARCADERO_ROUTE;
@@ -110,9 +110,9 @@ export default function App() {
 
         {/* Route header */}
         <View style={styles.routeHeader}>
-          <Text style={styles.routeCity}>{ROUTE.city}</Text>
+          <Text style={styles.routeCity}>{ROUTE.city.toUpperCase()}</Text>
           <Text style={styles.routeName}>{ROUTE.name}</Text>
-          <Text style={styles.routeDistance}>{ROUTE.distanceKm} km loop</Text>
+          <Text style={styles.routeDistance}>{ROUTE.distanceKm} km · {ROUTE.pois.length} landmarks</Text>
         </View>
       </View>
 
@@ -141,10 +141,10 @@ export default function App() {
           </View>
         )}
 
-        {/* Mode selector (only before/during run, not while audio plays) */}
+        {/* Mode selector */}
         {runState === 'idle' && (
           <>
-            <Text style={styles.sectionLabel}>Choose your lens</Text>
+            <Text style={styles.sectionLabel}>Your lens</Text>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -159,7 +159,6 @@ export default function App() {
                   ]}
                   onPress={() => setSelectedMode(m.id)}
                 >
-                  <Text style={styles.modeEmoji}>{m.emoji}</Text>
                   <Text
                     style={[
                       styles.modeLabel,
@@ -168,7 +167,9 @@ export default function App() {
                   >
                     {m.label}
                   </Text>
-                  <Text style={styles.modeDesc}>{m.description}</Text>
+                  <Text style={[styles.modeDesc, selectedMode === m.id && styles.modeDescActive]}>
+                    {m.description}
+                  </Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -213,83 +214,146 @@ export default function App() {
   );
 }
 
+// ─── RunCast design tokens ────────────────────────────────────────────────────
+// Warm charcoal (not cold Spotify black, not neutral Runna black)
+// Accent: broadcast amber — old radio transmitter meets golden-hour running
+const C = {
+  bg:            '#0D0C0A',
+  surface:       '#181612',
+  surfaceRaised: '#221F1A',
+  amber:         '#F5A623',   // RunCast's own accent — warm, broadcast, golden
+  amberText:     '#0D0C0A',   // text on amber bg
+  white:         '#FFFFFF',
+  textSecondary: 'rgba(255,255,255,0.52)',
+  textTertiary:  'rgba(255,255,255,0.28)',
+  border:        'rgba(255,255,255,0.09)',
+  borderWarm:    'rgba(245,166,35,0.22)',
+  danger:        '#FF5252',
+};
+
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0f0f0f' },
+  container:    { flex: 1, backgroundColor: C.bg },
   mapContainer: { flex: 1 },
 
+  // Route header — bottom-left overlay, editorial Strava-weight type
   routeHeader: {
     position: 'absolute',
-    bottom: 16,
+    bottom: 18,
     left: 16,
-    backgroundColor: 'rgba(0,0,0,0.72)',
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 14,
+    right: 16,
   },
-  routeCity:     { color: 'rgba(255,255,255,0.5)', fontSize: 11, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 1 },
-  routeName:     { color: '#fff', fontSize: 16, fontWeight: '700', marginTop: 2 },
-  routeDistance: { color: 'rgba(255,255,255,0.55)', fontSize: 12, marginTop: 2 },
+  routeCity: {
+    color: C.amber,
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 2.5,
+    textTransform: 'uppercase',
+    marginBottom: 5,
+  },
+  routeName: {
+    color: C.white,
+    fontSize: 28,
+    fontWeight: '800',
+    letterSpacing: -0.8,
+    lineHeight: 32,
+  },
+  routeDistance: {
+    color: C.textSecondary,
+    fontSize: 13,
+    fontWeight: '500',
+    marginTop: 6,
+    letterSpacing: 0.2,
+  },
 
+  // Bottom panel — Spotify-style frosted shelf
   bottomPanel: {
-    backgroundColor: '#0f0f0f',
+    backgroundColor: C.bg,
     paddingHorizontal: 16,
-    paddingBottom: 8,
-    paddingTop: 16,
-    gap: 12,
+    paddingBottom: 12,
+    paddingTop: 18,
+    gap: 14,
+    borderTopWidth: 1,
+    borderTopColor: C.border,
   },
 
+  // Stats row — Strava-weight numbers
   statsRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    backgroundColor: '#1c1c1e',
-    borderRadius: 16,
-    paddingVertical: 12,
+    backgroundColor: C.surface,
+    borderRadius: 18,
+    paddingVertical: 16,
+    borderWidth: 1,
+    borderColor: C.border,
   },
-  stat: { alignItems: 'center', flex: 1 },
-  statValue: { color: '#fff', fontSize: 18, fontWeight: '700' },
-  statLabel: { color: 'rgba(255,255,255,0.4)', fontSize: 11, marginTop: 2 },
-  statDivider: { width: 1, height: 28, backgroundColor: 'rgba(255,255,255,0.1)' },
+  stat:        { alignItems: 'center', flex: 1 },
+  statValue:   { color: C.white, fontSize: 24, fontWeight: '800', letterSpacing: -0.8 },
+  statLabel:   { color: C.textTertiary, fontSize: 10, fontWeight: '600', marginTop: 3, textTransform: 'uppercase', letterSpacing: 0.8 },
+  statDivider: { width: 1, height: 30, backgroundColor: C.border },
 
-  sectionLabel: { color: 'rgba(255,255,255,0.4)', fontSize: 12, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.8 },
+  // Section label
+  sectionLabel: {
+    color: C.textTertiary,
+    fontSize: 10,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 1.4,
+  },
 
-  modeRow: { gap: 10, paddingBottom: 4 },
+  // Mode chips — Spotify "channels" feel, amber for active
+  modeRow: { gap: 8, paddingBottom: 2 },
   modeChip: {
-    backgroundColor: '#1c1c1e',
-    borderRadius: 14,
-    paddingHorizontal: 14,
+    backgroundColor: C.surface,
+    borderRadius: 10,
+    paddingHorizontal: 16,
     paddingVertical: 10,
-    alignItems: 'center',
-    minWidth: 100,
-    borderWidth: 1.5,
-    borderColor: 'transparent',
+    borderWidth: 1,
+    borderColor: C.border,
   },
-  modeChipActive: { borderColor: '#fff', backgroundColor: '#2c2c2e' },
-  modeEmoji: { fontSize: 22 },
-  modeLabel: { color: 'rgba(255,255,255,0.6)', fontSize: 13, fontWeight: '600', marginTop: 4 },
-  modeLabelActive: { color: '#fff' },
-  modeDesc: { color: 'rgba(255,255,255,0.35)', fontSize: 10, marginTop: 2, textAlign: 'center' },
+  modeChipActive: {
+    backgroundColor: C.surfaceRaised,
+    borderColor: C.borderWarm,
+  },
+  modeLabel:       { color: C.textSecondary, fontSize: 13, fontWeight: '600' },
+  modeLabelActive: { color: C.amber },
+  modeDesc:        { color: C.textTertiary, fontSize: 10, marginTop: 2 },
+  modeDescActive:  { color: 'rgba(245,166,35,0.55)' },
 
-  errorText: { color: '#FF5252', fontSize: 12, textAlign: 'center' },
+  errorText: { color: C.danger, fontSize: 12, textAlign: 'center' },
 
+  // Buttons
   actionRow: { flexDirection: 'row', gap: 10 },
+
+  // Primary: amber fill — the one big action
   primaryButton: {
-    flex: 1, backgroundColor: '#fff', borderRadius: 16,
-    paddingVertical: 16, alignItems: 'center',
+    flex: 1,
+    backgroundColor: C.amber,
+    borderRadius: 14,
+    paddingVertical: 17,
+    alignItems: 'center',
   },
-  primaryButtonText: { color: '#000', fontSize: 16, fontWeight: '700' },
+  primaryButtonText: { color: C.amberText, fontSize: 16, fontWeight: '800', letterSpacing: 0.1 },
 
   secondaryButton: {
-    flex: 1, backgroundColor: '#1c1c1e', borderRadius: 16,
-    paddingVertical: 16, alignItems: 'center',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)',
+    flex: 1,
+    backgroundColor: C.surface,
+    borderRadius: 14,
+    paddingVertical: 17,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: C.border,
   },
-  secondaryButtonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  secondaryButtonText: { color: C.white, fontSize: 16, fontWeight: '600' },
 
   stopButton: {
-    flex: 1, backgroundColor: '#1c1c1e', borderRadius: 16,
-    paddingVertical: 16, alignItems: 'center',
-    borderWidth: 1, borderColor: '#FF5252',
+    flex: 1,
+    backgroundColor: C.surface,
+    borderRadius: 14,
+    paddingVertical: 17,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,82,82,0.4)',
   },
-  stopButtonText: { color: '#FF5252', fontSize: 16, fontWeight: '600' },
+  stopButtonText: { color: C.danger, fontSize: 16, fontWeight: '600' },
 });
