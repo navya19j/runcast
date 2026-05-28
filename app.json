@@ -13,6 +13,9 @@
         "NSLocationWhenInUseUsageDescription": "RunCast uses your location to trigger audio commentary as you run past landmarks.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "RunCast uses your location in the background to trigger audio commentary during your run.",
         "UIBackgroundModes": ["location", "audio"]
+      },
+      "config": {
+        "googleMapsApiKey": "YOUR_IOS_GOOGLE_MAPS_API_KEY"
       }
     },
     "android": {
@@ -25,7 +28,12 @@
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
         "ACCESS_BACKGROUND_LOCATION"
-      ]
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "YOUR_ANDROID_GOOGLE_MAPS_API_KEY"
+        }
+      }
     },
     "plugins": [
       [

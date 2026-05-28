@@ -9,7 +9,7 @@ import {
   Animated,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import MapView, { Marker, Polyline, PROVIDER_DEFAULT } from 'react-native-maps';
+import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from 'react-native-maps';
 import { City, CITIES } from '../data/cities';
 import { Route, Mode } from '../data/types';
 import { useWeather } from '../hooks/useWeather';
@@ -108,9 +108,9 @@ export default function HomeScreen({ onSelectRoute }: HomeScreenProps) {
         <MapView
           ref={mapRef}
           style={styles.map}
-          provider={PROVIDER_DEFAULT}
+          provider={PROVIDER_GOOGLE}
           initialRegion={selectedCity.mapRegion}
-          mapType="mutedStandard"
+          mapType="standard"
           showsUserLocation
           showsCompass={false}
           showsScale={false}

@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { StyleSheet } from 'react-native';
-import MapView, { Polyline, Marker, Circle } from 'react-native-maps';
+import MapView, { Polyline, Marker, Circle, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Coordinate, POI, Mode } from '../data/types';
 
 interface RunMapProps {
@@ -41,8 +41,9 @@ export default function RunMap({
     <MapView
       ref={mapRef}
       style={styles.map}
+      provider={PROVIDER_GOOGLE}
       initialRegion={mapRegion}
-      showsUserLocation={false} // we draw our own for clarity
+      showsUserLocation={false}
       showsCompass
       showsScale
       mapType="standard"
