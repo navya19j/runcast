@@ -10,11 +10,14 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import RunMap from './src/components/RunMap';
 import NowPlaying from './src/components/NowPlaying';
+import HomeScreen from './src/screens/HomeScreen';
 import { useGPS } from './src/hooks/useGPS';
 import { useAudio } from './src/hooks/useAudio';
 import { useProximity } from './src/hooks/useProximity';
 import SF_EMBARCADERO_ROUTE from './src/data/routes/sf_embarcadero';
-import { Mode, POI, RunState } from './src/data/types';
+import { CITIES } from './src/data/cities';
+import { Mode, POI, Route, RunState } from './src/data/types';
+import { City } from './src/data/cities';
 
 const MODES: { id: Mode; label: string; description: string }[] = [
   { id: 'history',     label: 'History',     description: 'The city\'s bones'    },
@@ -23,10 +26,14 @@ const MODES: { id: Mode; label: string; description: string }[] = [
   { id: 'local',       label: 'Local Life',  description: 'How it really lives'  },
 ];
 
-const ROUTE = SF_EMBARCADERO_ROUTE;
+type AppScreen = 'home' | 'run';
 
 export default function App() {
-  const [runState, setRunState] = useState<RunState>('idle');
+  const [screen, setScreen]           = useState<AppScreen>('home');
+  const [activeRoute, setActiveRoute] = useState<Route>(SF_EMBARCADERO_ROUTE);
+  const [activeCity, setActiveCity]   = useState<City>(CITIES[0]);
+
+  const [runState, setRunState]         = useState<RunState>('idle');
   const [selectedMode, setSelectedMode] = useState<Mode>('sightseeing');
   const [activePOIId, setActivePOIId] = useState<string | null>(null);
   const proximityResetRef = useRef<(() => void) | null>(null);
@@ -48,7 +55,7 @@ export default function App() {
 
   const { reset: resetProximity } = useProximity({
     position,
-    pois: ROUTE.pois,
+    pois: activeRoute.pois,
     mode: selectedMode,
     active: isActive,
     pacingSecPerM,
@@ -77,6 +84,14 @@ export default function App() {
     setActivePOIId(null);
   }, [stopCurrent]);
 
+  const handleSelectRoute = useCallback((city: City, route: Route) => {
+    setActiveCity(city);
+    setActiveRoute(route);
+    setRunState('idle');
+    setActivePOIId(null);
+    setScreen('run');
+  }, []);
+
   const formatDistance = (m: number) =>
     m >= 1000 ? `${(m / 1000).toFixed(2)} km` : `${Math.round(m)} m`;
 
@@ -88,6 +103,11 @@ export default function App() {
     return `${min}:${sec.toString().padStart(2, '0')} /km`;
   };
 
+  // Show home screen when not in a run
+  if (screen === 'home') {
+    return <HomeScreen onSelectRoute={handleSelectRoute} />;
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
@@ -95,12 +115,12 @@ export default function App() {
       {/* Map */}
       <View style={styles.mapContainer}>
         <RunMap
-          routeCoords={ROUTE.coordinates}
-          pois={ROUTE.pois}
+          routeCoords={activeRoute.coordinates}
+          pois={activeRoute.pois}
           mode={selectedMode}
           userPosition={position}
           activePOIId={activePOIId}
-          startLocation={ROUTE.startLocation}
+          startLocation={activeRoute.startLocation}
         />
         <NowPlaying
           audioState={audioState}
@@ -108,11 +128,17 @@ export default function App() {
           mode={selectedMode}
         />
 
-        {/* Route header */}
+        {/* Route header + back button */}
         <View style={styles.routeHeader}>
-          <Text style={styles.routeCity}>{ROUTE.city.toUpperCase()}</Text>
-          <Text style={styles.routeName}>{ROUTE.name}</Text>
-          <Text style={styles.routeDistance}>{ROUTE.distanceKm} km · {ROUTE.pois.length} landmarks</Text>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => { handleStopRun(); setScreen('home'); }}
+          >
+            <Text style={styles.backButtonText}>← Routes</Text>
+          </TouchableOpacity>
+          <Text style={styles.routeCity}>{activeRoute.city.toUpperCase()}</Text>
+          <Text style={styles.routeName}>{activeRoute.name}</Text>
+          <Text style={styles.routeDistance}>{activeRoute.distanceKm} km · {activeRoute.pois.length} landmarks</Text>
         </View>
       </View>
 
@@ -134,7 +160,7 @@ export default function App() {
             <View style={styles.statDivider} />
             <View style={styles.stat}>
               <Text style={styles.statValue}>
-                {ROUTE.pois.filter(p => p.clips[selectedMode]).length}
+                {activeRoute.pois.filter(p => p.clips[selectedMode]).length}
               </Text>
               <Text style={styles.statLabel}>Stops</Text>
             </View>
@@ -193,7 +219,7 @@ export default function App() {
               <TouchableOpacity style={styles.secondaryButton} onPress={handlePauseRun}>
                 <Text style={styles.secondaryButtonText}>Pause</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.stopButton} onPress={handleStopRun}>
+              <TouchableOpacity style={styles.stopButton} onPress={() => { handleStopRun(); setScreen('home'); }}>
                 <Text style={styles.stopButtonText}>End Run</Text>
               </TouchableOpacity>
             </>
@@ -203,7 +229,7 @@ export default function App() {
               <TouchableOpacity style={styles.primaryButton} onPress={handleResumeRun}>
                 <Text style={styles.primaryButtonText}>Resume</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.stopButton} onPress={handleStopRun}>
+              <TouchableOpacity style={styles.stopButton} onPress={() => { handleStopRun(); setScreen('home'); }}>
                 <Text style={styles.stopButtonText}>End Run</Text>
               </TouchableOpacity>
             </>
@@ -234,6 +260,17 @@ const C = {
 const styles = StyleSheet.create({
   container:    { flex: 1, backgroundColor: C.bg },
   mapContainer: { flex: 1 },
+
+  // Back button
+  backButton: {
+    alignSelf: 'flex-start',
+    marginBottom: 10,
+  },
+  backButtonText: {
+    color: C.amber,
+    fontSize: 13,
+    fontWeight: '600',
+  },
 
   // Route header — bottom-left overlay, editorial Strava-weight type
   routeHeader: {
