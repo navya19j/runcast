@@ -1,43 +1,45 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { Audio, AVPlaybackStatus } from 'expo-av';
+import {
+  createAudioPlayer,
+  setAudioModeAsync,
+  setIsAudioActiveAsync,
+  type AudioPlayer,
+} from 'expo-audio';
+import * as Speech from 'expo-speech';
+import AUDIO_MAP from '../data/audioAssets';
 
 const ENJOY_MOMENT_PAUSE_MS = 5000; // silence after clip before music resumes
-const CHIME_FADE_IN_MS = 800;
 
 export type AudioState = 'idle' | 'chime' | 'narrating' | 'moment_pause';
 
 export function useAudio() {
   const [audioState, setAudioState] = useState<AudioState>('idle');
   const [currentClipName, setCurrentClipName] = useState<string | null>(null);
-  const soundRef = useRef<Audio.Sound | null>(null);
+  const playerRef = useRef<AudioPlayer | null>(null);
   const pauseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sessionActiveRef = useRef(false);
+  const audioStateRef = useRef<AudioState>('idle');
+  audioStateRef.current = audioState;
 
-  // Configure audio session: duck other apps (Spotify, Apple Music, etc.)
-  // when we play, restore when we stop.
   const activateSession = useCallback(async () => {
     if (sessionActiveRef.current) return;
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: false,
-      interruptionModeIOS: 1, // DuckOthers = 2, but expo-av uses numeric on some versions
-      playsInSilentModeIOS: true,
-      staysActiveInBackground: true,
-      shouldDuckAndroid: true,
-      playThroughEarpieceAndroid: false,
+    await setAudioModeAsync({
+      playsInSilentMode: true,
+      interruptionMode: 'duckOthers',
+      shouldPlayInBackground: true,
     });
+    await setIsAudioActiveAsync(true);
     sessionActiveRef.current = true;
   }, []);
 
   const deactivateSession = useCallback(async () => {
     if (!sessionActiveRef.current) return;
-    // Release audio session so the OS restores background music
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: false,
-      interruptionModeIOS: 2, // MixWithOthers — lets music come back
-      playsInSilentModeIOS: true,
-      staysActiveInBackground: false,
-      shouldDuckAndroid: false,
+    await setAudioModeAsync({
+      playsInSilentMode: true,
+      interruptionMode: 'mixWithOthers',
+      shouldPlayInBackground: false,
     });
+    await setIsAudioActiveAsync(false).catch(() => {});
     sessionActiveRef.current = false;
   }, []);
 
@@ -46,10 +48,9 @@ export function useAudio() {
       clearTimeout(pauseTimerRef.current);
       pauseTimerRef.current = null;
     }
-    if (soundRef.current) {
-      await soundRef.current.stopAsync().catch(() => {});
-      await soundRef.current.unloadAsync().catch(() => {});
-      soundRef.current = null;
+    if (playerRef.current) {
+      playerRef.current.remove();
+      playerRef.current = null;
     }
     await deactivateSession();
     setAudioState('idle');
@@ -57,9 +58,9 @@ export function useAudio() {
   }, [deactivateSession]);
 
   /**
-   * Play a narration clip. Ducks system audio, plays clip, holds a
-   * "enjoy the moment" pause, then releases the audio session so
-   * the runner's music comes back naturally.
+   * Play a narration clip. Ducks system audio (Spotify / Apple Music),
+   * plays the clip, holds an "enjoy the moment" pause, then releases
+   * the audio session so the runner's music comes back naturally.
    */
   const playClip = useCallback(
     async (audioFile: string, clipName: string) => {
@@ -69,31 +70,31 @@ export function useAudio() {
       setCurrentClipName(clipName);
       setAudioState('chime');
 
-      let sound: Audio.Sound;
-      try {
-        const { sound: s } = await Audio.Sound.createAsync(
-          // Assets are bundled at build time. At runtime we require dynamically.
-          // For MVP we use a try/catch so missing files degrade gracefully.
-          // eslint-disable-next-line @typescript-eslint/no-require-imports
-          require(`../../assets/audio/${audioFile}`),
-          { shouldPlay: false, volume: 1.0 },
-        );
-        sound = s;
-      } catch {
-        console.warn(`[useAudio] Audio file not found: ${audioFile}. Skipping.`);
+      const asset = AUDIO_MAP[audioFile];
+      if (!asset) {
+        console.warn(`[useAudio] No asset registered for: ${audioFile}. Skipping.`);
         await deactivateSession();
         setAudioState('idle');
         setCurrentClipName(null);
         return;
       }
 
-      soundRef.current = sound;
+      let player: AudioPlayer;
+      try {
+        player = createAudioPlayer(asset);
+      } catch {
+        console.warn(`[useAudio] Failed to load: ${audioFile}. Skipping.`);
+        await deactivateSession();
+        setAudioState('idle');
+        setCurrentClipName(null);
+        return;
+      }
+
+      playerRef.current = player;
       setAudioState('narrating');
 
-      sound.setOnPlaybackStatusUpdate((status: AVPlaybackStatus) => {
-        if (!status.isLoaded) return;
+      player.addListener('playbackStatusUpdate', (status) => {
         if (status.didJustFinish) {
-          // Clip finished → enjoy-the-moment pause
           setAudioState('moment_pause');
           pauseTimerRef.current = setTimeout(async () => {
             await stopCurrent();
@@ -101,15 +102,30 @@ export function useAudio() {
         }
       });
 
-      await sound.playAsync();
+      player.play();
     },
     [activateSession, deactivateSession, stopCurrent],
   );
 
-  // Cleanup on unmount
+  /** Short TTS cue — only when no POI narration is playing. */
+  const speakNudge = useCallback((text: string) => {
+    if (audioStateRef.current !== 'idle') return;
+    Speech.stop();
+    Speech.speak(text, {
+      language: 'en-US',
+      rate: 1.05,
+      pitch: 1.0,
+    });
+  }, []);
+
+  const stopNudge = useCallback(() => {
+    Speech.stop();
+  }, []);
+
   useEffect(() => {
     return () => {
       stopCurrent();
+      Speech.stop();
     };
   }, [stopCurrent]);
 
@@ -118,6 +134,8 @@ export function useAudio() {
     currentClipName,
     playClip,
     stopCurrent,
+    speakNudge,
+    stopNudge,
     isPlaying: audioState === 'narrating',
   };
 }

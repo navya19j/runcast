@@ -6,12 +6,16 @@
     "@turf/distance": "^7.3.5",
     "@turf/helpers": "^7.3.5",
     "expo": "~56.0.6",
-    "expo-av": "^16.0.8",
+    "expo-audio": "~56.0.11",
     "expo-location": "~56.0.14",
+    "expo-speech": "~56.0.3",
     "expo-status-bar": "~56.0.4",
+    "expo-task-manager": "~56.0.15",
     "react": "19.2.3",
     "react-native": "0.85.3",
-    "react-native-maps": "1.27.2"
+    "react-native-gesture-handler": "~2.31.1",
+    "react-native-maps": "1.27.2",
+    "react-native-svg": "15.15.4"
   },
   "devDependencies": {
     "@types/node": "^25.9.1",
@@ -21,8 +25,8 @@
   },
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web"
   },
   "private": true

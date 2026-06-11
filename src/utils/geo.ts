@@ -1,4 +1,4 @@
-import { Coordinate } from '../data/types';
+import { Coordinate, Route } from '../data/types';
 
 const EARTH_RADIUS_M = 6371000;
 
@@ -55,6 +55,71 @@ export function progressAlongRoute(
  * Given pace in seconds-per-metre, returns how many metres ahead
  * to trigger a clip so it starts playing just before the runner arrives.
  */
+function perpendicularDistance(p: Coordinate, a: Coordinate, b: Coordinate): number {
+  const dx = b.lng - a.lng;
+  const dy = b.lat - a.lat;
+  if (dx === 0 && dy === 0) {
+    return Math.hypot(p.lng - a.lng, p.lat - a.lat);
+  }
+  const t = Math.max(
+    0,
+    Math.min(1, ((p.lng - a.lng) * dx + (p.lat - a.lat) * dy) / (dx * dx + dy * dy)),
+  );
+  const px = a.lng + t * dx;
+  const py = a.lat + t * dy;
+  return Math.hypot(p.lng - px, p.lat - py);
+}
+
+/** Ramer–Douglas–Peucker — preserves corners unlike stride sampling. */
+function rdp(coords: Coordinate[], epsilon: number): Coordinate[] {
+  if (coords.length < 3) return coords;
+  const first = coords[0];
+  const last = coords[coords.length - 1];
+  let dmax = 0;
+  let idx = 0;
+  for (let i = 1; i < coords.length - 1; i++) {
+    const d = perpendicularDistance(coords[i], first, last);
+    if (d > dmax) {
+      dmax = d;
+      idx = i;
+    }
+  }
+  if (dmax >= epsilon) {
+    const left = rdp(coords.slice(0, idx + 1), epsilon);
+    const right = rdp(coords.slice(idx), epsilon);
+    return [...left.slice(0, -1), ...right];
+  }
+  return [first, last];
+}
+
+/** Bounding region that fits a route — for map camera. */
+export function routeRegion(route: Route, padding = 1.45) {
+  const lats = route.coordinates.map(c => c.lat);
+  const lngs = route.coordinates.map(c => c.lng);
+  const minLat = Math.min(...lats);
+  const maxLat = Math.max(...lats);
+  const minLng = Math.min(...lngs);
+  const maxLng = Math.max(...lngs);
+  return {
+    latitude: (minLat + maxLat) / 2,
+    longitude: (minLng + maxLng) / 2,
+    latitudeDelta: Math.max((maxLat - minLat) * padding, 0.015),
+    longitudeDelta: Math.max((maxLng - minLng) * padding, 0.015),
+  };
+}
+
+/** Downsample for map rendering — shape-aware, avoids cutting across loops. */
+export function simplifyForMap(coords: Coordinate[], maxPoints = 96): Coordinate[] {
+  if (coords.length <= maxPoints) return coords;
+  let epsilon = 0.000008; // ~1 m
+  let simplified = rdp(coords, epsilon);
+  while (simplified.length > maxPoints && epsilon < 0.0005) {
+    epsilon *= 1.8;
+    simplified = rdp(coords, epsilon);
+  }
+  return simplified;
+}
+
 export function paceAdjustedTriggerDistance(
   baseTriggerM: number,
   clipDurationSec: number,

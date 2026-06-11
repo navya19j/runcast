@@ -3,6 +3,20 @@ import SF_EMBARCADERO_ROUTE from './routes/sf_embarcadero';
 import MUMBAI_BANDRA_WATERFRONT, {
   MUMBAI_COASTAL_PROMENADE,
 } from './routes/mumbai_bandra_waterfront';
+import {
+  SF_GG_PARK_LAP,
+  SF_OCEAN_BEACH,
+  SF_BATTERIES_TO_BLUFFS,
+  SF_CRISSY_TO_BAKER,
+  SF_BERNAL_HEIGHTS,
+  SF_LANDS_END,
+  SF_GLEN_CANYON_TWIN_PEAKS,
+  MUMBAI_MARINE_DRIVE,
+  MUMBAI_POWAI_LAKE,
+  MUMBAI_SHIVAJI_PARK,
+  MUMBAI_WORLI_SEAFACE,
+  MUMBAI_PRIYADARSHINI_PARK,
+} from './routes/curated';
 
 export interface City {
   id: string;
@@ -38,7 +52,16 @@ export const CITIES: City[] = [
       latitudeDelta: 0.065,
       longitudeDelta: 0.065,
     },
-    routes: [SF_EMBARCADERO_ROUTE],
+    routes: [
+      SF_EMBARCADERO_ROUTE,
+      SF_GG_PARK_LAP,
+      SF_OCEAN_BEACH,
+      SF_BATTERIES_TO_BLUFFS,
+      SF_CRISSY_TO_BAKER,
+      SF_BERNAL_HEIGHTS,
+      SF_LANDS_END,
+      SF_GLEN_CANYON_TWIN_PEAKS,
+    ],
     heatWarningAboveC: 26,
     coldWarningBelowC: 8,
   },
@@ -55,7 +78,15 @@ export const CITIES: City[] = [
       latitudeDelta: 0.10,
       longitudeDelta: 0.10,
     },
-    routes: [MUMBAI_BANDRA_WATERFRONT, MUMBAI_COASTAL_PROMENADE],
+    routes: [
+      MUMBAI_BANDRA_WATERFRONT,
+      MUMBAI_COASTAL_PROMENADE,
+      MUMBAI_MARINE_DRIVE,
+      MUMBAI_POWAI_LAKE,
+      MUMBAI_SHIVAJI_PARK,
+      MUMBAI_WORLI_SEAFACE,
+      MUMBAI_PRIYADARSHINI_PARK,
+    ],
     heatWarningAboveC: 32,   // Mumbai is always warm — only flag extreme heat
     coldWarningBelowC: 15,
     monsoonMonths: [6, 7, 8, 9],

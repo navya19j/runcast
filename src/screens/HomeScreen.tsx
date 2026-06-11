@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,12 +6,21 @@ import {
   StyleSheet,
   ScrollView,
   SafeAreaView,
-  Animated,
+  ActivityIndicator,
+  Alert,
+  Linking,
+  Platform,
+  useWindowDimensions,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Circle } from 'react-native-maps';
+import { MAP_PROVIDER } from '../utils/mapProvider';
+import RouteOverlay from '../components/RouteOverlay';
+import MapCanvas from '../components/MapCanvas';
+import * as Location from 'expo-location';
 import { City, CITIES } from '../data/cities';
-import { Route, Mode } from '../data/types';
+import { Route, Mode, Coordinate } from '../data/types';
+import { routeRegion } from '../utils/geo';
 import { useWeather } from '../hooks/useWeather';
 import WeatherBar from '../components/WeatherBar';
 
@@ -34,21 +43,141 @@ const MODE_COUNT_LABELS: Partial<Record<number, string>> = {
   1: '1 mode', 2: '2 modes', 3: '3 modes', 4: '4 modes',
 };
 
+type RouteShape = 'any' | 'loop' | 'one_way';
+
+const SHAPE_OPTIONS: { id: RouteShape; label: string }[] = [
+  { id: 'any',     label: 'Any' },
+  { id: 'loop',    label: 'Loop' },
+  { id: 'one_way', label: 'One way' },
+];
+
 interface HomeScreenProps {
-  onSelectRoute: (city: City, route: Route) => void;
+  onSelectRoute: (city: City, route: Route, startOverride?: Coordinate) => void;
 }
 
 export default function HomeScreen({ onSelectRoute }: HomeScreenProps) {
-  const [selectedCity, setSelectedCity]   = useState<City>(CITIES[0]);
-  const [hoveredRouteId, setHoveredRouteId] = useState<string | null>(null);
+  const [selectedCity, setSelectedCity]     = useState<City>(CITIES[0]);
+  const [previewRouteId, setPreviewRouteId] = useState<string | null>(null);
+  const [routeShape, setRouteShape]         = useState<RouteShape>('any');
+  const [currentLocation, setCurrentLocation] = useState<Coordinate | null>(null);
+  const [locationLoading, setLocationLoading] = useState(false);
+  const [locationLabel, setLocationLabel]     = useState<string | null>(null);
+  const [locationError, setLocationError]     = useState<string | null>(null);
   const mapRef = useRef<MapView>(null);
+  const { height: windowHeight } = useWindowDimensions();
+  const mapHeight = Math.round(windowHeight * 0.42);
   const { weather, loading, error } = useWeather(selectedCity);
+
+  const visibleRoutes = useMemo(() => selectedCity.routes.filter(r => {
+    if (routeShape === 'loop')    return r.loop === true;
+    if (routeShape === 'one_way') return r.loop === false;
+    return true;
+  }), [selectedCity.routes, routeShape]);
+
+  const previewRoute = useMemo(
+    () => visibleRoutes.find(r => r.id === previewRouteId) ?? null,
+    [visibleRoutes, previewRouteId],
+  );
+
+  const handlePreviewRoute = (route: Route) => {
+    setPreviewRouteId(route.id);
+    mapRef.current?.animateToRegion(routeRegion(route), 550);
+  };
+
+  useEffect(() => {
+    if (previewRouteId && !visibleRoutes.some(r => r.id === previewRouteId)) {
+      setPreviewRouteId(null);
+      mapRef.current?.animateToRegion(selectedCity.mapRegion, 500);
+    }
+  }, [visibleRoutes, previewRouteId, selectedCity.mapRegion]);
 
   // Animate to city when switched
   const handleCityChange = (city: City) => {
     setSelectedCity(city);
-    setHoveredRouteId(null);
+    setPreviewRouteId(null);
     mapRef.current?.animateToRegion(city.mapRegion, 600);
+  };
+
+  const flyToCoordinate = (coord: Coordinate) => {
+    mapRef.current?.animateToRegion({
+      latitude:       coord.lat,
+      longitude:      coord.lng,
+      latitudeDelta:  0.08,
+      longitudeDelta: 0.08,
+    }, 700);
+  };
+
+  const fetchPosition = async (): Promise<Location.LocationObject> => {
+    const opts = { accuracy: Location.Accuracy.High };
+    const timeoutMs = 15000;
+    try {
+      return await Promise.race([
+        Location.getCurrentPositionAsync(opts),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('GPS timeout')), timeoutMs),
+        ),
+      ]);
+    } catch {
+      const last = await Location.getLastKnownPositionAsync();
+      if (last) return last;
+      throw new Error('Could not get GPS fix');
+    }
+  };
+
+  // Request GPS and fly map to user
+  const handleUseCurrentLocation = async () => {
+    setLocationLoading(true);
+    setLocationError(null);
+    try {
+      const existing = await Location.getForegroundPermissionsAsync();
+      let status = existing.status;
+      if (status !== 'granted') {
+        ({ status } = await Location.requestForegroundPermissionsAsync());
+      }
+      if (status !== 'granted') {
+        setLocationError('Location permission required');
+        Alert.alert(
+          'Location access needed',
+          'RunCast needs your location to set a start point. Enable Location for RunCast in Settings.',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Open Settings', onPress: () => Linking.openSettings() },
+          ],
+        );
+        return;
+      }
+
+      const pos = await fetchPosition();
+      const coord: Coordinate = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      setCurrentLocation(coord);
+      flyToCoordinate(coord);
+
+      // Label is optional — never block on geocoding
+      setLocationLabel('Current location');
+      try {
+        const [place] = await Location.reverseGeocodeAsync({
+          latitude: coord.lat,
+          longitude: coord.lng,
+        });
+        if (place) {
+          const parts = [place.street, place.district ?? place.subregion ?? place.city].filter(Boolean);
+          if (parts.length > 0) setLocationLabel(parts.join(', '));
+        }
+      } catch {
+        // GPS succeeded; keep generic label
+      }
+    } catch {
+      setLocationError('Could not get location — try outdoors or enable Location Services');
+    } finally {
+      setLocationLoading(false);
+    }
+  };
+
+  const handleClearLocation = () => {
+    setCurrentLocation(null);
+    setLocationLabel(null);
+    setLocationError(null);
+    mapRef.current?.animateToRegion(selectedCity.mapRegion, 600);
   };
 
   // Mode count for a route
@@ -104,73 +233,134 @@ export default function HomeScreen({ onSelectRoute }: HomeScreenProps) {
       />
 
       {/* ── Map ── */}
-      <View style={styles.mapContainer}>
-        <MapView
+      <View style={[styles.mapContainer, { height: mapHeight }]}>
+        <MapCanvas
           ref={mapRef}
-          style={styles.map}
-          provider={PROVIDER_GOOGLE}
+          containerStyle={styles.mapFill}
+          provider={MAP_PROVIDER}
           initialRegion={selectedCity.mapRegion}
           mapType="standard"
-          showsUserLocation
-          showsCompass={false}
+          showsUserLocation={false}
+          showsCompass
           showsScale={false}
+          scrollEnabled
+          zoomEnabled
+          zoomTapEnabled
+          rotateEnabled
+          pitchEnabled={false}
+          moveOnMarkerPress={false}
+          cacheEnabled={Platform.OS === 'android'}
         >
-          {selectedCity.routes.map(route => {
-            const isHovered = hoveredRouteId === route.id;
-            return (
-              <React.Fragment key={route.id}>
-                {/* Route polyline — convert {lat,lng} → {latitude,longitude} */}
-                <Polyline
-                  coordinates={route.coordinates.map(c => ({ latitude: c.lat, longitude: c.lng }))}
-                  strokeColor={isHovered ? C.amber : 'rgba(245,166,35,0.5)'}
-                  strokeWidth={isHovered ? 4 : 2.5}
-                />
-                {/* Start marker */}
-                <Marker
-                  coordinate={{ latitude: route.startLocation.lat, longitude: route.startLocation.lng }}
-                  onPress={() => setHoveredRouteId(route.id)}
-                >
-                  <View style={[
-                    styles.markerOuter,
-                    isHovered && styles.markerOuterActive,
-                  ]}>
-                    <View style={[
-                      styles.markerInner,
-                      isHovered && styles.markerInnerActive,
-                    ]} />
-                  </View>
-                </Marker>
-              </React.Fragment>
-            );
-          })}
-        </MapView>
+          {previewRoute && (
+            <RouteOverlay key={previewRoute.id} route={previewRoute} focus="solo" />
+          )}
 
-        {/* Routes count badge */}
-        <View style={styles.mapBadge}>
-          <Text style={styles.mapBadgeText}>
-            {selectedCity.routes.length} route{selectedCity.routes.length !== 1 ? 's' : ''} · {selectedCity.name}
+          {currentLocation && (
+            <Circle
+              center={{ latitude: currentLocation.lat, longitude: currentLocation.lng }}
+              radius={18}
+              fillColor="rgba(66,133,244,0.35)"
+              strokeColor="#4285F4"
+              strokeWidth={2}
+              zIndex={10}
+            />
+          )}
+        </MapCanvas>
+
+        <TouchableOpacity
+          style={styles.mapBadge}
+          onPress={() => {
+            if (!previewRoute) return;
+            setPreviewRouteId(null);
+            mapRef.current?.animateToRegion(selectedCity.mapRegion, 500);
+          }}
+          activeOpacity={previewRoute ? 0.75 : 1}
+          disabled={!previewRoute}
+        >
+          <Text style={styles.mapBadgeText} numberOfLines={1}>
+            {previewRoute
+              ? `${previewRoute.name} · tap to show all`
+              : `${visibleRoutes.length} routes · tap a card to preview`}
           </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* ── Preferences bar ── */}
+      <View style={styles.prefsBar}>
+        {/* Start location */}
+        <View style={styles.prefRow}>
+          <Text style={styles.prefLabel} numberOfLines={1}>Start</Text>
+          {currentLocation ? (
+            <View style={styles.locationActive}>
+              <View style={styles.locationDot} />
+              <Text style={styles.locationActiveText} numberOfLines={1}>
+                {locationLabel}
+              </Text>
+              <TouchableOpacity onPress={handleClearLocation} style={styles.clearBtn}>
+                <Text style={styles.clearBtnText}>✕</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <TouchableOpacity
+              style={styles.locationBtn}
+              onPress={handleUseCurrentLocation}
+              disabled={locationLoading}
+              activeOpacity={0.75}
+            >
+              {locationLoading ? (
+                <ActivityIndicator size={11} color={C.amber} style={{ marginRight: 5 }} />
+              ) : (
+                <Text style={styles.locationBtnIcon}>◎</Text>
+              )}
+              <Text style={styles.locationBtnText}>
+                {locationLoading ? 'Locating…' : 'Use my location'}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
+        {locationError && (
+          <Text style={styles.locationError}>{locationError}</Text>
+        )}
+
+        {/* Route shape */}
+        <View style={styles.prefRow}>
+          <Text style={styles.prefLabel} numberOfLines={1}>Shape</Text>
+          <View style={styles.shapeRow}>
+            {SHAPE_OPTIONS.map(opt => (
+              <TouchableOpacity
+                key={opt.id}
+                style={[styles.shapePill, routeShape === opt.id && styles.shapePillActive]}
+                onPress={() => setRouteShape(opt.id)}
+                activeOpacity={0.75}
+              >
+                <Text style={[styles.shapePillText, routeShape === opt.id && styles.shapePillTextActive]}>
+                  {opt.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
       </View>
 
       {/* ── Route cards ── */}
       <View style={styles.routeSection}>
-        <Text style={styles.sectionLabel}>Routes</Text>
+        <Text style={styles.sectionLabel}>
+          {visibleRoutes.length === 0 ? 'No routes match' : 'Routes'}
+        </Text>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.routeScroll}
         >
-          {selectedCity.routes.map(route => {
+          {visibleRoutes.map(route => {
             const modes = modeCount(route);
-            const isActive = hoveredRouteId === route.id;
+            const isActive = previewRouteId === route.id;
             return (
               <TouchableOpacity
                 key={route.id}
                 style={[styles.routeCard, isActive && styles.routeCardActive]}
-                onPress={() => onSelectRoute(selectedCity, route)}
-                onPressIn={() => setHoveredRouteId(route.id)}
-                onPressOut={() => setHoveredRouteId(null)}
+                onPress={() => onSelectRoute(selectedCity, route, currentLocation ?? undefined)}
+                onPressIn={() => handlePreviewRoute(route)}
                 activeOpacity={0.85}
               >
                 {/* Distance pill */}
@@ -248,9 +438,9 @@ const styles = StyleSheet.create({
   cityChipText:       { color: C.textSecondary, fontSize: 13, fontWeight: '600' },
   cityChipTextActive: { color: C.amber },
 
-  // Map
-  mapContainer: { flex: 1, position: 'relative' },
-  map:          { flex: 1 },
+  // Map — fixed height (set inline); flex:1 was starving gestures on iOS
+  mapContainer: { position: 'relative' },
+  mapFill:      { flex: 1 },
   mapBadge: {
     position: 'absolute',
     bottom: 12,
@@ -264,34 +454,119 @@ const styles = StyleSheet.create({
   },
   mapBadgeText: { color: C.textSecondary, fontSize: 11, fontWeight: '600' },
 
-  // Markers
-  markerOuter: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: 'rgba(245,166,35,0.22)',
+  // Preferences bar
+  prefsBar: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderTopWidth: 1,
+    borderTopColor: C.border,
+    gap: 8,
+  },
+  prefRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1.5,
-    borderColor: 'rgba(245,166,35,0.5)',
+    gap: 10,
   },
-  markerOuterActive: {
-    backgroundColor: 'rgba(245,166,35,0.35)',
-    borderColor: C.amber,
-    width: 26,
-    height: 26,
-    borderRadius: 13,
+  prefLabel: {
+    color: C.textTertiary,
+    fontSize: 10,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
+    width: 46,
+    flexShrink: 0,
   },
-  markerInner: {
-    width: 8,
-    height: 8,
+
+  // Location button (inactive state)
+  locationBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: C.surface,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: C.border,
+  },
+  locationBtnIcon: {
+    color: C.amber,
+    fontSize: 12,
+  },
+  locationBtnText: {
+    color: C.textSecondary,
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  locationError: {
+    color: C.danger,
+    fontSize: 11,
+    fontWeight: '500',
+    marginLeft: 56,
+    lineHeight: 15,
+  },
+
+  // Location active state
+  locationActive: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 7,
+    backgroundColor: 'rgba(66,133,244,0.10)',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(66,133,244,0.30)',
+  },
+  locationDot: {
+    width: 7,
+    height: 7,
     borderRadius: 4,
-    backgroundColor: C.amber,
+    backgroundColor: '#4285F4',
+    flexShrink: 0,
   },
-  markerInnerActive: {
-    width: 11,
-    height: 11,
-    borderRadius: 6,
+  locationActiveText: {
+    flex: 1,
+    color: '#7EB8FF',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  clearBtn: {
+    padding: 2,
+  },
+  clearBtnText: {
+    color: C.textTertiary,
+    fontSize: 11,
+    fontWeight: '700',
+  },
+
+  // Shape pills
+  shapeRow: {
+    flex: 1,
+    flexDirection: 'row',
+    gap: 6,
+  },
+  shapePill: {
+    backgroundColor: C.surface,
+    borderRadius: 7,
+    paddingHorizontal: 11,
+    paddingVertical: 5,
+    borderWidth: 1,
+    borderColor: C.border,
+  },
+  shapePillActive: {
+    backgroundColor: C.surfaceRaised,
+    borderColor: C.amberBorder,
+  },
+  shapePillText: {
+    color: C.textSecondary,
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  shapePillTextActive: {
+    color: C.amber,
   },
 
   // Route section

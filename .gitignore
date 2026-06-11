@@ -33,6 +33,7 @@ yarn-error.*
 # local env files — never commit secrets
 .env
 .env.*
+!.env.example
 .env*.local
 
 # typescript
@@ -41,3 +42,8 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# python
+scripts/__pycache__/
+__pycache__/
+*.pyc

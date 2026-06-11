@@ -1,0 +1,390 @@
+{
+  "meta": {
+    "note": "LLM-distilled seed routes — community knowledge synthesised from training data covering running blogs, Strava segments, Reddit threads, run club guides, and travel resources. Coordinates are approximate centroids; OSM pipeline adds precise geometry.",
+    "generated": "2026-05-28",
+    "sources": [
+      "Strava community knowledge",
+      "r/sanfrancisco",
+      "r/bayarearunners",
+      "r/mumbai",
+      "SF Road Runners",
+      "Mumbai Road Runners",
+      "TimeOut SF/Mumbai",
+      "running blogs"
+    ]
+  },
+  "cities": {
+    "san_francisco": {
+      "routes": [
+        {
+          "name": "Embarcadero to Crissy Field",
+          "area": "Waterfront",
+          "dist_km_approx": 7.5,
+          "elevation_gain_m": 15,
+          "surface": "paved",
+          "loop": false,
+          "terrain_notes": "Flat the entire way. Bay Trail with water on your right the whole run. Light signals only at the start near the Ferry Building — rest is car-free path.",
+          "best_time": "Early morning or evening. Weekday mornings quietest.",
+          "safety": "Well-lit, heavily used, very safe any time of day.",
+          "avoid": "Midday weekends — extremely crowded around Pier 39 and Fisherman's Wharf.",
+          "signature": "The best flat run in SF. Ferry Building to the Golden Gate Bridge base — you'll see the bridge get closer with every kilometre.",
+          "strava_segment": "Pier 35 to Pier 9",
+          "reddit_mentions": [
+            "embarcadero run",
+            "ferry building loop",
+            "SF waterfront run"
+          ],
+          "community_rating": 5,
+          "start_lat": 37.7955,
+          "start_lng": -122.3937,
+          "start_elevation_m": 7.0
+        },
+        {
+          "name": "Golden Gate Park Big Lap",
+          "area": "Parks",
+          "dist_km_approx": 11.2,
+          "elevation_gain_m": 55,
+          "surface": "mixed",
+          "loop": true,
+          "terrain_notes": "Perimeter road (JFK + MLK drives) mostly flat, some gentle rollers in the Panhandle. JFK closed to cars permanently — fully car-free. MLK still has limited traffic on weekdays.",
+          "best_time": "Sunday mornings — the entire park road network is car-free 9am–6pm.",
+          "safety": "Safe throughout. Well-used. Some dark sections near Stow Lake after sunset.",
+          "avoid": "Narrow paths during Saturday afternoon crowds.",
+          "signature": "SF's favourite long run. Every local runner has a GGP lap story.",
+          "strava_segment": "Golden Gate Park 1 Big Lap",
+          "reddit_mentions": [
+            "GGP run",
+            "golden gate park loop",
+            "JFK drive running"
+          ],
+          "community_rating": 5,
+          "start_lat": 37.7694,
+          "start_lng": -122.4862,
+          "start_elevation_m": 66.0
+        },
+        {
+          "name": "Ocean Beach / Great Highway",
+          "area": "Ocean",
+          "dist_km_approx": 8.0,
+          "elevation_gain_m": 12,
+          "surface": "paved",
+          "loop": false,
+          "terrain_notes": "Dead flat. Completely closed to cars — one of the longest car-free urban running corridors in the US. Exposed to Pacific wind — bring a layer.",
+          "best_time": "Any time. Sunrise is spectacular. Closed to cars permanently.",
+          "safety": "Very safe. Well-lit at night. Wind can be strong — plan to run into wind first.",
+          "avoid": "Thick SF fog can make visibility low — rare safety concern.",
+          "signature": "Fog rolling in off the Pacific as you run south. The most SF thing you can do.",
+          "strava_segment": "Lower Great Highway Trail",
+          "reddit_mentions": [
+            "great highway run",
+            "ocean beach run",
+            "sunset run SF"
+          ],
+          "community_rating": 5,
+          "start_lat": 37.7677,
+          "start_lng": -122.5113,
+          "start_elevation_m": 0.0
+        },
+        {
+          "name": "Batteries to Bluffs (Presidio)",
+          "area": "Presidio",
+          "dist_km_approx": 5.8,
+          "elevation_gain_m": 86,
+          "surface": "unpaved",
+          "loop": false,
+          "terrain_notes": "Coastal bluff trail. Moderate hills — nothing extreme but you will feel it. Some stairs, mostly packed dirt path. Spectacular views of the bridge and Marin headlands.",
+          "best_time": "Morning — trail gets traffic later. Not lit at night.",
+          "safety": "Safe during day. No lighting — avoid after dark. Trail is narrow in sections.",
+          "avoid": "Wet conditions make some sections muddy and slippery.",
+          "signature": "The Presidio's coastal trail is one of the most beautiful urban runs in the world. Period.",
+          "strava_segment": "Batteries to Bluffs Trail",
+          "reddit_mentions": [
+            "Presidio run",
+            "bluffs trail",
+            "Presidio coastal"
+          ],
+          "community_rating": 5,
+          "start_lat": 37.7989,
+          "start_lng": -122.4744,
+          "start_elevation_m": 87.0
+        },
+        {
+          "name": "Crissy Field to Baker Beach",
+          "area": "Waterfront",
+          "dist_km_approx": 4.2,
+          "elevation_gain_m": 30,
+          "surface": "mixed",
+          "loop": false,
+          "terrain_notes": "Crissy Field is flat restored wetland. Transitions to a gentle climb up to Baker Beach through the Presidio. Great combo of flat coastal + light trail.",
+          "best_time": "Morning. Crissy Field is famously cold and windy in afternoons.",
+          "safety": "Safe throughout. Popular with dog walkers.",
+          "avoid": "Nothing specific — one of SF's most forgiving routes.",
+          "signature": "Golden Gate Bridge close enough to touch. Kite surfers on Crissy Field. Baker Beach gives you the postcard photo.",
+          "strava_segment": "Marina Green to Crissy Field",
+          "reddit_mentions": [
+            "crissy field run",
+            "baker beach run"
+          ],
+          "community_rating": 5,
+          "start_lat": 37.8037,
+          "start_lng": -122.449,
+          "start_elevation_m": 7.0
+        },
+        {
+          "name": "Bernal Heights Loop",
+          "area": "Trails",
+          "dist_km_approx": 3.5,
+          "elevation_gain_m": 95,
+          "surface": "unpaved",
+          "loop": true,
+          "terrain_notes": "360-degree city views from the hilltop. Short but steep — proper hill training. Dirt trail with loose rock in sections. Off-leash dogs everywhere.",
+          "best_time": "Any time — hilltop catches the sun all day. Sunrise and sunset spectacular.",
+          "safety": "Safe, well-used. Avoid in heavy rain — muddy and slippery.",
+          "avoid": "Nothing dangerous but very exposed — cold and windy in winter.",
+          "signature": "Best bang-for-buck hill training in SF. Views of the entire Bay. Locals treat it as their backyard.",
+          "strava_segment": null,
+          "reddit_mentions": [
+            "Bernal Heights run",
+            "bernal loop",
+            "bernal hill"
+          ],
+          "community_rating": 4,
+          "start_lat": 37.7441,
+          "start_lng": -122.4156,
+          "start_elevation_m": 95.0
+        },
+        {
+          "name": "Glen Canyon to Twin Peaks",
+          "area": "Trails",
+          "dist_km_approx": 7.0,
+          "elevation_gain_m": 180,
+          "surface": "mixed",
+          "loop": false,
+          "terrain_notes": "One of the more technical urban runs in SF. Glen Canyon is a genuine canyon trail in the middle of the city. Transitions to paved road climb up Twin Peaks. Serious elevation.",
+          "best_time": "Morning. Twin Peaks is very exposed — fog and wind can be brutal midday.",
+          "safety": "Glen Canyon trail can be isolated. Run with a partner early or late.",
+          "avoid": "Avoid Glen Canyon in wet season — creek crossings become difficult.",
+          "signature": "You forget you're in a city. Then you summit Twin Peaks and the whole city is beneath you.",
+          "strava_segment": "Twin Peaks from Portola",
+          "reddit_mentions": [
+            "Glen Canyon run",
+            "Twin Peaks run",
+            "SF Crosstown Trail"
+          ],
+          "community_rating": 4,
+          "start_lat": 37.7378,
+          "start_lng": -122.4413,
+          "start_elevation_m": 127.0
+        },
+        {
+          "name": "Lands End Trail",
+          "area": "Trails",
+          "dist_km_approx": 5.5,
+          "elevation_gain_m": 110,
+          "surface": "unpaved",
+          "loop": false,
+          "terrain_notes": "Rugged coastal trail along the northwest tip of SF. Some technical sections with roots and uneven rock. Spectacular ocean views. Connects to Sutro Baths ruins at the end.",
+          "best_time": "Low tide reveals more of the rocky coastline. Morning for best light.",
+          "safety": "Some sections close to cliff edges — stay on marked trail. Not lit.",
+          "avoid": "Wet days make the path very slippery.",
+          "signature": "Raw, wild, feels nothing like the city 500m behind you. The Sutro Baths ruins are an unreal finish line.",
+          "strava_segment": null,
+          "reddit_mentions": [
+            "Lands End run",
+            "Sutro Baths run",
+            "coastal trail SF"
+          ],
+          "community_rating": 5,
+          "start_lat": 37.7819,
+          "start_lng": -122.5073,
+          "start_elevation_m": 109.0
+        }
+      ]
+    },
+    "mumbai": {
+      "routes": [
+        {
+          "name": "Marine Drive Full Loop",
+          "area": "Marine Drive",
+          "dist_km_approx": 3.6,
+          "elevation_gain_m": 4,
+          "surface": "paved",
+          "loop": false,
+          "terrain_notes": "Completely flat. The Queen's Necklace arc from Nariman Point to Chowpatty. Promenade is wide and smooth. Some broken tile sections mid-2025 — getting repaired.",
+          "best_time": "5:00–7:30 AM. Before heat and traffic. Pre-sunrise is magical — city lights on the curve of the bay.",
+          "safety": "Very safe early morning. Gets crowded 6:30am onwards. Excellent lighting.",
+          "avoid": "Post 9am — becomes a tourist walk, too crowded for running.",
+          "signature": "The most iconic run in India. Every serious Mumbai runner has done this. The curve of the bay at sunrise is unforgettable.",
+          "strava_segment": "Marine Drive",
+          "reddit_mentions": [
+            "Marine Drive run",
+            "morning run Mumbai",
+            "best run Mumbai",
+            "Queen's Necklace run"
+          ],
+          "community_rating": 5,
+          "start_lat": 18.9442,
+          "start_lng": 72.8235,
+          "start_elevation_m": 6.0
+        },
+        {
+          "name": "Carter Road to Bandstand Loop",
+          "area": "Bandra",
+          "dist_km_approx": 4.5,
+          "elevation_gain_m": 22,
+          "surface": "paved",
+          "loop": true,
+          "terrain_notes": "Flat coastal promenade with some gentle undulation near Bandra Fort. Entirely car-free on the promenade. Carter Road is the most popular running spot in Bandra by far.",
+          "best_time": "5:30–7:30 AM. After 8am it gets busy with walkers and couples.",
+          "safety": "Very safe. Well-lit. Popular enough that you're never alone.",
+          "avoid": "Post-sunset — less lighting near Bandstand end, though still used.",
+          "signature": "Sea Link views at Bandstand. The old Portuguese fort at the end. Best stretch of running in Bandra.",
+          "strava_segment": "Carter road",
+          "reddit_mentions": [
+            "Carter Road run",
+            "Bandra run",
+            "Bandstand running"
+          ],
+          "community_rating": 5,
+          "start_lat": 19.057,
+          "start_lng": 72.8156,
+          "start_elevation_m": 0.0
+        },
+        {
+          "name": "Worli Seaface",
+          "area": "Marine Drive",
+          "dist_km_approx": 3.2,
+          "elevation_gain_m": 5,
+          "surface": "paved",
+          "loop": false,
+          "terrain_notes": "Flat promenade. Less famous than Marine Drive but calmer and often less crowded. Connects to the Worli end of the Bandra-Worli Sea Link.",
+          "best_time": "Early morning. Can be done as extension of Marine Drive for a longer run.",
+          "safety": "Safe. Good lighting.",
+          "avoid": "Nothing specific.",
+          "signature": "Quieter version of Marine Drive. Worli fishing village on one side, open sea on the other.",
+          "strava_segment": null,
+          "reddit_mentions": [
+            "Worli seaface run",
+            "Worli promenade"
+          ],
+          "community_rating": 4,
+          "start_lat": 19.0096,
+          "start_lng": 72.8165,
+          "start_elevation_m": 9.0
+        },
+        {
+          "name": "Danda to Versova Beach Walk",
+          "area": "Beaches",
+          "dist_km_approx": 4.5,
+          "elevation_gain_m": 0,
+          "surface": "sand",
+          "loop": false,
+          "terrain_notes": "Three beaches end to end — Danda, Juhu, Versova. Entirely flat, entirely sand. Hard sand near the waterline at low tide is ideal. Construction debris near VBSL in northern section (2025).",
+          "best_time": "Very early morning at low tide. 5:00–6:30 AM for hard sand conditions.",
+          "safety": "Safe early morning. Deserted after dark — avoid then.",
+          "avoid": "High tide — soft sand makes running very difficult. Monsoon — waves reach the beach.",
+          "signature": "Three Bollywood film locations in one run. Fishermen launching boats at dawn. Raw, unfiltered Mumbai.",
+          "strava_segment": null,
+          "reddit_mentions": [
+            "Juhu beach run",
+            "Versova beach",
+            "beach run Mumbai"
+          ],
+          "community_rating": 4,
+          "start_lat": 19.0728,
+          "start_lng": 72.8353,
+          "start_elevation_m": 20.0
+        },
+        {
+          "name": "Powai Lake Loop",
+          "area": "Suburbs",
+          "dist_km_approx": 6.2,
+          "elevation_gain_m": 35,
+          "surface": "paved",
+          "loop": true,
+          "terrain_notes": "Gentle undulations around the lake. Road surface is good — IIT Bombay campus on one side, Hiranandani colony on the other. One of the most underrated runs in Mumbai.",
+          "best_time": "Early morning. Weekdays are quieter — less weekend jogger traffic.",
+          "safety": "Safe. Well-lit around Hiranandani. Some sections near IIT campus less busy after dark.",
+          "avoid": "Heavy rain — some sections flood near the lake edge.",
+          "signature": "Completely different energy from the coastal runs. Green, calm, almost feels like a hill station.",
+          "strava_segment": "Hiranandani 3k Loop",
+          "reddit_mentions": [
+            "Powai Lake run",
+            "Hiranandani run",
+            "IIT Powai running"
+          ],
+          "community_rating": 4,
+          "start_lat": 19.1257,
+          "start_lng": 72.9091,
+          "start_elevation_m": 40.0
+        },
+        {
+          "name": "Shivaji Park Circuit",
+          "area": "Central",
+          "dist_km_approx": 2.4,
+          "elevation_gain_m": 3,
+          "surface": "paved",
+          "loop": true,
+          "terrain_notes": "Flat perimeter road around Mumbai's largest open ground. One of the oldest running spots in the city — Sachin Tendulkar trained cricket here. Concrete surface. Gets very crowded 6-8am.",
+          "best_time": "5:00–6:00 AM for space. After 8:30 AM when the morning crowd thins.",
+          "safety": "Very safe. Always people around. Well-lit.",
+          "avoid": "6:30–8:00 AM — shared with hundreds of walkers, cyclists and cricketers.",
+          "signature": "Mumbai's original public fitness ground. The morning crowd is an institution — every age, every fitness level.",
+          "strava_segment": "Shivaji Park",
+          "reddit_mentions": [
+            "Shivaji Park run",
+            "Dadar run"
+          ],
+          "community_rating": 4,
+          "start_lat": 19.0281,
+          "start_lng": 72.8402,
+          "start_elevation_m": 14.0
+        },
+        {
+          "name": "Mumbai Coastal Road Promenade",
+          "area": "Marine Drive",
+          "dist_km_approx": 9.0,
+          "elevation_gain_m": 8,
+          "surface": "paved",
+          "loop": false,
+          "terrain_notes": "Brand new as of August 2025. Smooth, wide, dedicated path. Runs from Marine Lines to Worli — longer than Marine Drive itself. No traffic signals on the promenade path. Best surface in Mumbai.",
+          "best_time": "Any time — it's so new and well-maintained it's genuinely good at any hour.",
+          "safety": "Excellent. New infrastructure, good lighting, popular.",
+          "avoid": "Nothing — this is the best new running infrastructure in Mumbai.",
+          "signature": "The future of running in Mumbai. Longer, smoother, and more modern than Marine Drive. Will become the #1 run in the city within a year.",
+          "strava_segment": null,
+          "reddit_mentions": [
+            "Coastal Road promenade",
+            "new Mumbai waterfront"
+          ],
+          "community_rating": 5,
+          "start_lat": 18.956,
+          "start_lng": 72.8113,
+          "start_elevation_m": 13.0
+        },
+        {
+          "name": "Priyadarshini Park Loop (Malabar Hill)",
+          "area": "Central",
+          "dist_km_approx": 1.8,
+          "elevation_gain_m": 12,
+          "surface": "paved",
+          "loop": true,
+          "terrain_notes": "Small park with a perimeter jogging track. Immaculate surface. Malabar Hill location means sea views over Marine Drive. Short but excellent for interval training.",
+          "best_time": "Early morning. Park opens at 5:30 AM.",
+          "safety": "Very safe, gated park with security.",
+          "avoid": "Evenings get busy with walkers — hard to maintain running pace.",
+          "signature": "Hidden gem. The Hanging Gardens and sea views make it feel like running on top of the world.",
+          "strava_segment": null,
+          "reddit_mentions": [
+            "Priyadarshini Park run",
+            "Malabar Hill run"
+          ],
+          "community_rating": 4,
+          "start_lat": 18.9572,
+          "start_lng": 72.808,
+          "start_elevation_m": 17.0
+        }
+      ]
+    }
+  }
+}

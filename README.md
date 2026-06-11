@@ -1,132 +1,233 @@
 # RunCast
 
-> GPS-triggered audio running tours for travel runners.  
-> Explore cities on foot — history, food, sightseeing, and local life narrated as you run past them.
+GPS-triggered audio running tours for travel runners. Pick a city route, choose a lens (history, food, sightseeing, local life), and hear narration as you pass landmarks — with light turn-by-turn nudges along the way.
 
-Your music plays. When you pass something worth knowing about, the audio ducks and a clip plays. After it finishes, 5 seconds of silence — look around, absorb it — then your music comes back.
-
----
-
-## First route: SF Embarcadero Loop (7.8km)
-
-**Rincon Hill → Bay Bridge → Ferry Building → Pier 39 → Fisherman's Wharf → Aquatic Park → North Beach → back**
-
-9 points of interest. 4 modes. Each mode tells a completely different story about the same run.
-
-| Mode | Voice | What you hear |
-|---|---|---|
-| 🏛 History | Warm, authoritative | Earthquakes, McCarthyism, Italian immigrants, the Beat Generation |
-| 🥐 Food | Enthusiastic, warm | Sourdough starter that survived 1906, best 7am espresso, Hog Island Oyster |
-| 📸 Sightseeing | Energetic | Best view angles, Bay Lights, Alcatraz from Pier 39 |
-| 🏘 Local Life | Conspiratorial | Where locals actually run, the Dolphin Club, Saturday morning run clubs |
+**15 routes** across San Francisco and Mumbai. Your music keeps playing; RunCast ducks it for clips, then hands audio back.
 
 ---
 
-## How it works
+## Requirements
 
-```
-You run → GPS tracks position
-        → Proximity engine checks POIs ahead
-        → Pace-adjusted trigger (faster pace = earlier trigger)
-        → System audio ducks (Spotify/Apple Music goes quiet)
-        → Narration plays
-        → 5-second "enjoy the moment" pause
-        → Your music returns
-```
+| Tool | Version |
+|------|---------|
+| Node.js | 20+ (see `package.json` engines if added) |
+| npm | 10+ |
+| Xcode | 16+ (iOS device builds) |
+| CocoaPods | 1.15+ |
+| Apple Developer account | For physical iPhone installs |
 
----
-
-## Project structure
-
-```
-src/
-├── data/
-│   ├── types.ts                   Core types: Route, POI, Mode, AudioClip
-│   └── routes/
-│       └── sf_embarcadero.ts     7.8km SF loop with full POI scripts
-├── utils/
-│   └── geo.ts                    Haversine + pace-adjusted trigger distance
-├── hooks/
-│   ├── useGPS.ts                 GPS tracking + rolling pace calculation
-│   ├── useAudio.ts               Playback + music ducking + moment pause
-│   └── useProximity.ts           Pace-aware POI proximity detection
-└── components/
-    ├── RunMap.tsx                 Map with route overlay and POI markers
-    └── NowPlaying.tsx            Animated "now playing" overlay
-scripts/
-└── generate_audio.py             ElevenLabs batch audio generator
-```
+`react-native-maps` needs a **development build** — Expo Go is not supported.
 
 ---
 
-## Getting started
-
-### 1. Install dependencies
+## Setup
 
 ```bash
+git clone https://github.com/navya19j/runcast.git
+cd runcast
 npm install
+cp .env.example .env   # add Google Maps keys at minimum
 ```
 
-### 2. Generate audio clips (requires ElevenLabs API key)
+### Environment variables
+
+| Variable | Required for app | Purpose |
+|----------|------------------|---------|
+| `GOOGLE_MAPS_API_KEY_IOS` | iOS maps (if using Google provider) | Injected via `app.config.js` at prebuild |
+| `GOOGLE_MAPS_API_KEY_ANDROID` | Android maps | Same |
+| `ELEVENLABS_API_KEY` | Audio generation only | `scripts/generate_audio.py` |
+| `STRAVA_*` | Route tooling only | Optional Strava import in scripts |
+
+---
+
+## Building for iOS
+
+Native projects are **not** committed (`ios/` is gitignored). Generate them once:
+
+```bash
+npx expo prebuild --platform ios
+cd ios && pod install && cd ..
+```
+
+`app.config.js` patches the Podfile so `react-native-maps` uses the correct pod name (`react-native-maps`, not `react-native-google-maps`).
+
+### Linker fix (if build fails on `Sealable` symbol)
+
+After prebuild, ensure `ios/Podfile.properties.json` includes:
+
+```json
+{
+  "expo.jsEngine": "hermes",
+  "EXPO_USE_PRECOMPILED_MODULES": "false",
+  "ios.buildReactNativeFromSource": "true"
+}
+```
+
+Then `cd ios && pod install`.
+
+### List connected devices
+
+```bash
+xcrun xctrace list devices 2>&1 | grep iPhone
+```
+
+Copy the UDID in parentheses, e.g. `00008140-000654C22EFB001C`.
+
+---
+
+## Build modes
+
+### 1. Standalone on device (no Metro) — **recommended for real runs**
+
+Embeds JavaScript in the app (`main.jsbundle`). Works offline from your Mac after install. No dev server at launch.
+
+```bash
+cd ios
+xcodebuild \
+  -workspace RunCast.xcworkspace \
+  -scheme RunCast \
+  -configuration Release \
+  -destination 'id=YOUR_DEVICE_UDID' \
+  -allowProvisioningUpdates \
+  DEVELOPMENT_TEAM=YOUR_TEAM_ID
+
+xcrun devicectl device install app --device YOUR_DEVICE_UDID \
+  "$HOME/Library/Developer/Xcode/DerivedData/RunCast-"*/Build/Products/Release-iphoneos/RunCast.app
+```
+
+Or via Expo (bundles JS at build time, skips starting Metro):
+
+```bash
+npx expo run:ios --device "YOUR_DEVICE_UDID" --configuration Release
+```
+
+**First install:** on the iPhone go to **Settings → General → VPN & Device Management** and trust your developer certificate.
+
+### 2. Development build (Metro + hot reload)
+
+Phone and Mac must be on the **same Wi‑Fi**.
+
+```bash
+# Terminal 1 — bundler
+REACT_NATIVE_PACKAGER_HOSTNAME=$(ipconfig getifaddr en0) npx expo start --host lan
+
+# Terminal 2 — build & install Debug
+npx expo run:ios --device "YOUR_DEVICE_UDID"
+```
+
+Debug builds load JS from Metro (`AppDelegate` uses `RCTBundleURLProvider` in `#if DEBUG`).
+
+### 3. Simulator
+
+```bash
+npx expo run:ios
+```
+
+---
+
+## Testing without running outside
+
+On the run screen (before **Start Run**), tap **Simulate** to walk the route virtually:
+
+- Turn navigation nudges and POI audio fire along the polyline
+- **Drift off route (test)** triggers the off-route warning
+- No GPS or location permission needed
+
+---
+
+## Route data pipeline
+
+Accurate paths: user GPX → cached polyline → OSM corridor geometry (no OSRM street routing).
+
+```bash
+# Rebuild all route coordinates and patch .ts files
+python3 scripts/refresh_all_coords.py
+
+# Force rebuild from OpenStreetMap (ignores cache; user GPX still wins)
+python3 scripts/refresh_all_coords.py --force
+
+# Validate path quality
+python3 scripts/audit_routes.py
+```
+
+**Gold-standard geometry:** drop a Strava/Komoot export at  
+`scripts/routes_raw/gpx/{route_id}.gpx`  
+then run `refresh_all_coords.py`.
+
+Generated references: `scripts/routes_raw/polylines/` and `scripts/routes_raw/gpx/*.generated.gpx`.
+
+---
+
+## Audio generation
 
 ```bash
 cd scripts
 pip install -r requirements.txt
-export ELEVENLABS_API_KEY="your_key_here"
+export ELEVENLABS_API_KEY="your_key"
 
-# Preview what would be generated
 python generate_audio.py --dry-run
-
-# Generate one mode first
 python generate_audio.py --mode sightseeing
-
-# Generate all modes
 python generate_audio.py --mode all
 ```
 
-Audio files are saved to `assets/audio/sf_embarcadero/`.
-
-### 3. Run the app
+Clips land in `assets/audio/{route_folder}/`. Regenerate `src/data/audioAssets.ts`:
 
 ```bash
-# iOS (requires development build for react-native-maps)
-npx expo run:ios
-
-# Android
-npx expo run:android
+python3 scripts/extract_audio_manifest.py
 ```
 
-> **Note:** `react-native-maps` requires a development build on iOS — it won't work in Expo Go.  
-> Run `npx expo install expo-dev-client` and then `npx expo run:ios` for the first build.
+---
+
+## Project layout
+
+```
+src/
+├── data/routes/          Route polylines, POIs, scripts
+├── hooks/
+│   ├── useGPS.ts         Live location + pace
+│   ├── useProximity.ts   POI trigger engine
+│   ├── useNavigation.ts  Turn / off-route nudges
+│   ├── useSimulatedRun.ts  Indoor route simulation
+│   └── useAudio.ts       Narration + TTS nudges (expo-speech)
+├── screens/              Home, detail, run complete
+└── utils/
+    ├── geo.ts            Distance, map simplify, route progress
+    └── navigation.ts     Turn detection from polyline
+
+scripts/
+├── refresh_all_coords.py   Build paths → patch TS + manifest
+├── osm_path.py             OSM corridor / trail geometry
+├── gpx_io.py               GPX import/export
+└── audit_routes.py         Path QA
+
+App.tsx                   Run screen, simulate mode, navigation wiring
+```
 
 ---
 
-## Adding a new city
+## EAS / TestFlight (optional)
 
-1. Add a new route file in `src/data/routes/` following the `Route` type
-2. Add POI scripts for each mode — write them like a great tour guide who runs
-3. Add the route to `ROUTES` in `scripts/generate_audio.py`
-4. Run `python generate_audio.py --route your_route`
-5. Import and display in `App.tsx`
+`eas.json` is included. For cloud builds:
 
----
-
-## Roadmap
-
-- [ ] Additional SF routes (Bernal Hill, GGP, Presidio)
-- [ ] NYC: Central Park, Brooklyn Bridge, High Line
-- [ ] Paris, Tokyo, London
-- [ ] Community route contributions
-- [ ] GPX export to Garmin / Strava
-- [ ] Language learning mode
+```bash
+npm install -g eas-cli
+eas login
+eas build --platform ios --profile production
+```
 
 ---
 
 ## Tech stack
 
-- **Expo / React Native** — iOS + Android
-- **expo-location** — GPS with background tracking
-- **expo-av** — audio playback + system music ducking
-- **react-native-maps** — Google Maps on Android, Apple Maps on iOS
-- **ElevenLabs** — TTS narration with per-mode voice characters
+- **Expo SDK 56** / React Native 0.85
+- **expo-location** + TaskManager — foreground + background GPS
+- **expo-audio** — narration with music ducking
+- **expo-speech** — short navigation nudges
+- **react-native-maps** — Apple Maps on iOS (see `src/utils/mapProvider.ts`)
 - **TypeScript** throughout
+
+---
+
+## License
+
+Private / personal project — see repository owner for terms.
