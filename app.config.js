@@ -26,6 +26,8 @@ module.exports = withFixMapsPodfile({
     ios: {
       supportsTablet: false,
       bundleIdentifier: 'com.navyaj.runcast',
+      // Personal team (Navya Jain). Adobe org = JQ525L2MZD — set APPLE_TEAM_ID to override.
+      appleTeamId: process.env.APPLE_TEAM_ID || 'DCM2GY42X4',
       infoPlist: {
         // Required for iOS background location — must be explicit string values
         NSLocationWhenInUseUsageDescription:
@@ -70,7 +72,23 @@ module.exports = withFixMapsPodfile({
           isAndroidForegroundServiceEnabled: true,
         },
       ],
-      'expo-audio',
+      [
+        'expo-audio',
+        {
+          microphonePermission:
+            'RunCast records short voice notes about what you see on your run.',
+        },
+      ],
+      'expo-sharing',
+      [
+        'expo-image-picker',
+        {
+          photosPermission:
+            'RunCast lets you attach photos from your runs to a route.',
+          cameraPermission:
+            'RunCast uses the camera so you can snap a photo when you finish a run.',
+        },
+      ],
     ],
     web: {
       favicon: './assets/favicon.png',

@@ -1,13 +1,5 @@
 {
   "clips": {
-    "sf_gg_park/conservatory_history.mp3": {
-      "route_id": "sf_gg_park_big_lap",
-      "poi_id": "gg_conservatory",
-      "poi_name": "Conservatory of Flowers",
-      "mode": "history",
-      "script": "[warm, storytelling] The Victorian greenhouse ahead — Conservatory of Flowers — is the oldest public building in San Francisco. Built in 1879 from a kit ordered from Ireland, the glass and iron panels shipped around Cape Horn. [pause] It was nearly destroyed in the 1995 winter storms and sat closed for eight years. [building] The city spent six million dollars restoring it. It reopened in 2003 looking exactly as it did in 1879. [warm] San Francisco keeps deciding its old things are worth keeping.",
-      "audioFile": "sf_gg_park/conservatory_history.mp3"
-    },
     "sf_gg_park/bison_local.mp3": {
       "route_id": "sf_gg_park_big_lap",
       "poi_id": "gg_bison_paddock",
@@ -63,22 +55,6 @@
       "mode": "local",
       "script": "[conspiratorial] The wind is almost always behind you on the way back. [pause] SF's prevailing wind comes from the northwest — off the Pacific, across the dunes. The locals know to run south first, into the headwind, and let it carry them home. [warm] You chose correctly. Or you didn't and you're suffering. Either way — you're now one of the people who knows.",
       "audioFile": "sf_ocean_beach/great_hwy_local.mp3"
-    },
-    "sf_ocean_beach/turnaround_food.mp3": {
-      "route_id": "sf_ocean_beach",
-      "poi_id": "ocean_beach_turnaround",
-      "poi_name": "Sloat Blvd — Turnaround",
-      "mode": "food",
-      "script": "[warm, amused] Sloat Boulevard is the turnaround — and if you need post-run food, you're close. [pause] Java Beach Cafe is fifteen minutes back up the highway — surfer crowd, good drip coffee, no pretension. [conspiratorial] For something warmer: the Riptide bar at the north end of the beach does a surprisingly good weekend brunch. Dog-friendly. Outdoor heaters for the fog. [warm] Nobody does post-run food in the cold like Sunset District locals.",
-      "audioFile": "sf_ocean_beach/turnaround_food.mp3"
-    },
-    "sf_ocean_beach/turnaround_sightseeing.mp3": {
-      "route_id": "sf_ocean_beach",
-      "poi_id": "ocean_beach_turnaround",
-      "poi_name": "Sloat Blvd — Turnaround",
-      "mode": "sightseeing",
-      "script": "[warm, satisfied] Turnaround point. Four kilometres from where you started. [pause] Look back north — the entire Great Highway stretching to where the windmills are. The Pacific on your left. The sea has been there the whole time; sometimes you forget to actually look at it while you're running. [warm] Look now. Then head home with the wind.",
-      "audioFile": "sf_ocean_beach/turnaround_sightseeing.mp3"
     },
     "sf_batteries/chamberlin_history.mp3": {
       "route_id": "sf_batteries_to_bluffs",
@@ -256,14 +232,6 @@
       "script": "[building, expansive] Twin Peaks. [pause] The entire Bay Area from here — Bay Bridge, Bay, Oakland, Berkeley Hills, Mount Tamalpais to the north, the San Mateo hills south. On the clearest days you can see Mount Diablo, fifty miles east. [warm] Sutro Tower directly below you — the distinctive red and white transmission tower that has appeared in every San Francisco skyline photograph since 1973. [pause] You came up through the canyon. You've seen the hidden, quiet city, and now the whole city. [satisfied] This is the best possible finish to that trail.",
       "audioFile": "sf_glen_canyon/twin_peaks_sightseeing.mp3"
     },
-    "mumbai_marine_drive/nariman_history.mp3": {
-      "route_id": "mumbai_marine_drive",
-      "poi_id": "marine_drive_nariman",
-      "poi_name": "Nariman Point",
-      "mode": "history",
-      "script": "[warm, storytelling] Nariman Point — Mumbai's financial centre, built entirely on reclaimed sea. [pause] In the 1950s, this was open water. The Back Bay Reclamation Scheme filled it in over three decades using sand dredged from the seabed. [building] The towers you see behind you now — Nariman Point was India's first modern CBD, the country's most expensive commercial real estate through the 1970s and 80s. [warm] You're running on the bottom of the Arabian Sea. Mumbai is always doing this — deciding the sea is in the wrong place.",
-      "audioFile": "mumbai_marine_drive/nariman_history.mp3"
-    },
     "mumbai_marine_drive/midpoint_sightseeing.mp3": {
       "route_id": "mumbai_marine_drive",
       "poi_id": "marine_drive_view",
@@ -360,22 +328,6 @@
       "script": "[reverent, warm] Behind the seaface wall here is Worli Koliwada — one of the oldest Koli fishing settlements in Mumbai, predating the city by centuries. [pause] The Koli people were Mumbai's original inhabitants. Their name gives us words we use every day — 'koliwada' for fishing village, and ultimately the name 'Mumbai' itself, from their goddess Mumbadevi. [building] Corporate towers rise twenty metres from the last fishing nets. The Koli families still launch boats at dawn from the slipways behind you. [warm] Every other city in the world would have demolished this for real estate. Mumbai hasn't. Not yet.",
       "audioFile": "mumbai_worli/koliwada_history.mp3"
     },
-    "mumbai_worli/sea_link_sightseeing.mp3": {
-      "route_id": "mumbai_worli_seaface",
-      "poi_id": "worli_sea_link_view",
-      "poi_name": "Sea Link — Worli End",
-      "mode": "sightseeing",
-      "script": "[excited, warm] The Bandra-Worli Sea Link — from this end, you're looking directly up at the south tower. 128 metres. Cable-stayed. [pause] At the right time of morning the cables catch the light differently on each side — golden on the east face, shadowed on the west. [building] The bridge connects this promenade to Bandra, where you started if you did the Carter Road run this morning. [warm] If you haven't done that one — it's worth knowing. Five kilometres, zero traffic lights, through Chimbai fishing village and Bandra Fort. The other side of the same bridge.",
-      "audioFile": "mumbai_worli/sea_link_sightseeing.mp3"
-    },
-    "mumbai_worli/sea_link_local.mp3": {
-      "route_id": "mumbai_worli_seaface",
-      "poi_id": "worli_sea_link_view",
-      "poi_name": "Sea Link — Worli End",
-      "mode": "local",
-      "script": "[warm, conspiratorial] The Worli Seaface morning crowd is different from Marine Drive. [pause] Fewer tourists. More people from the neighbourhood itself — Worli residents, Koli fishermen finishing the night shift, the occasional corporate runner from Lower Parel who discovered this promenade before their colleagues did. [building] The seaface doesn't have Marine Drive's prestige. That's exactly why it's better. [warm] The city hasn't marketed it yet. The crowd is still the right one.",
-      "audioFile": "mumbai_worli/sea_link_local.mp3"
-    },
     "mumbai_worli/post_run_food.mp3": {
       "route_id": "mumbai_worli_seaface",
       "poi_id": "worli_post_run",
@@ -415,6 +367,246 @@
       "mode": "local",
       "script": "[warm, conspiratorial] Priyadarshini Park has a specific morning population. [pause] Retired professionals from Malabar Hill's residential towers. A few serious runners doing laps before the hill residents wake up. The Parsi aunties who have been doing the same circuit at the same time since 1985 and will outlast everyone else here. [building] Malabar Hill is the most expensive residential address in India. The Chief Minister lives on this ridge. [amused] The morning park crowd has absolutely no interest in any of that. They're here for the sea air and the gossip. Same as everywhere else.",
       "audioFile": "mumbai_priyadarshini/local.mp3"
+    },
+    "sf_angel_island/ayala_cove_history.mp3": {
+      "route_id": "sf_angel_island",
+      "poi_id": "ayala_cove",
+      "poi_name": "Ayala Cove",
+      "mode": "history",
+      "script": "[warm, storyteller] You land at Ayala Cove, named for Juan de Ayala — the first European to sail a ship into San Francisco Bay, in 1775. [pause] He anchored right about here and spent weeks mapping the bay while his crew recovered. For decades after, this cove was a quarantine station: ships from overseas had to stop here first, and anyone sick stayed behind. [building] You're starting your run at the Bay's original front door.",
+      "audioFile": "sf_angel_island/ayala_cove_history.mp3"
+    },
+    "sf_angel_island/ayala_cove_sightseeing.mp3": {
+      "route_id": "sf_angel_island",
+      "poi_id": "ayala_cove",
+      "poi_name": "Ayala Cove",
+      "mode": "sightseeing",
+      "script": "[energetic] Turn around for a second. That's the San Francisco skyline across the water, the Bay Bridge to your left, and Sausalito tucked into the Marin hills on your right. [pause] On the whole eleven-kilometre loop ahead, you're never out of sight of water. Pace yourself — the views get even better on the far side.",
+      "audioFile": "sf_angel_island/ayala_cove_sightseeing.mp3"
+    },
+    "sf_angel_island/immigration_station_history.mp3": {
+      "route_id": "sf_angel_island",
+      "poi_id": "immigration_station",
+      "poi_name": "Immigration Station",
+      "mode": "history",
+      "script": "[somber, measured] This is the Angel Island Immigration Station — often called the Ellis Island of the West, but the story here is harder. [pause] From 1910 to 1940, this is where immigrants from across the Pacific were processed, and many were detained for weeks or months under the Chinese Exclusion Act. [quiet] Detainees carved poems into the wooden barrack walls — grief, anger, hope. Many are still there, preserved. Over half a million people passed through these rooms.",
+      "audioFile": "sf_angel_island/immigration_station_history.mp3"
+    },
+    "sf_angel_island/immigration_station_local.mp3": {
+      "route_id": "sf_angel_island",
+      "poi_id": "immigration_station",
+      "poi_name": "Immigration Station",
+      "mode": "local",
+      "script": "[reflective] Most people who ride the ferry never make it to this side of the island. [pause] If you have time after your run, the barracks are open — the carved poems on the walls are worth the detour. It's one of the quietest, most moving spots in the whole Bay Area, and you've got it nearly to yourself out here.",
+      "audioFile": "sf_angel_island/immigration_station_local.mp3"
+    },
+    "sf_angel_island/camp_reynolds_history.mp3": {
+      "route_id": "sf_angel_island",
+      "poi_id": "camp_reynolds",
+      "poi_name": "Camp Reynolds",
+      "mode": "history",
+      "script": "[warm] Coming up on the west side is Camp Reynolds, a Civil War-era Army garrison built in the 1860s to defend the Bay. [pause] The island stayed military for almost a century — Civil War, both World Wars, even a Nike missile site during the Cold War, aimed at incoming Soviet bombers. [amused] Today the only thing being launched is you, around the back half of this loop.",
+      "audioFile": "sf_angel_island/camp_reynolds_history.mp3"
+    },
+    "sf_attpark_vista/oracle_park_sightseeing.mp3": {
+      "route_id": "sf_attpark_vista",
+      "poi_id": "oracle_park",
+      "poi_name": "Oracle Park",
+      "mode": "sightseeing",
+      "script": "[energetic] You're starting at Oracle Park, home of the Giants — and that body of water just beyond the right-field wall is McCovey Cove. [amused] When a lefty crushes one out, it lands in the bay, and kayakers paddle around out there waiting to fish the ball out of the water. They call them splash hits. There's a counter on the wall.",
+      "audioFile": "sf_attpark_vista/oracle_park_sightseeing.mp3"
+    },
+    "sf_attpark_vista/oracle_park_local.mp3": {
+      "route_id": "sf_attpark_vista",
+      "poi_id": "oracle_park",
+      "poi_name": "Oracle Park",
+      "mode": "local",
+      "script": "[warm] This stretch of waterfront didn't exist as a runner's paradise until pretty recently — it was rail yards and piers. Now the ballpark anchors the whole south Embarcadero. [conspiratorial] Local tip: on a game day, start your run early. Once first pitch nears, this promenade fills with forty thousand people in orange and black.",
+      "audioFile": "sf_attpark_vista/oracle_park_local.mp3"
+    },
+    "sf_attpark_vista/ferry_building_history.mp3": {
+      "route_id": "sf_attpark_vista",
+      "poi_id": "ferry_building",
+      "poi_name": "Ferry Building",
+      "mode": "history",
+      "script": "[storyteller] Before the bridges were built, this was the second-busiest transit terminal in the world — fifty thousand commuters a day arrived by ferry right here. [pause] Then the Bay Bridge opened in 1936, the Golden Gate in '37, and the ferries nearly died overnight. The building survived, and so did the clock — still keeping time.",
+      "audioFile": "sf_attpark_vista/ferry_building_history.mp3"
+    },
+    "sf_attpark_vista/ferry_building_food.mp3": {
+      "route_id": "sf_attpark_vista",
+      "poi_id": "ferry_building",
+      "poi_name": "Ferry Building",
+      "mode": "food",
+      "script": "[warm, indulgent] The Ferry Building — that clock tower has watched over the waterfront since 1898. [pause] Inside is one of the best food markets in the country: local oysters, Cowgirl Creamery cheese, Blue Bottle coffee. [amused] On Saturdays the farmers market spills outside and the whole place smells like roasting chiles and fresh bread. Maybe a post-run reward.",
+      "audioFile": "sf_attpark_vista/ferry_building_food.mp3"
+    },
+    "sf_attpark_vista/vista_point_sightseeing.mp3": {
+      "route_id": "sf_attpark_vista",
+      "poi_id": "vista_point",
+      "poi_name": "Golden Gate Vista Point",
+      "mode": "sightseeing",
+      "script": "[triumphant] You made it — the Golden Gate Bridge, right above you. [pause] That International Orange paint was originally just a sealant primer, but the architect loved how it looked against the fog and the hills, and fought to keep it. [building] Fifteen kilometres of waterfront behind you, and the most famous bridge on earth in front. Catch your breath. You earned this one.",
+      "audioFile": "sf_attpark_vista/vista_point_sightseeing.mp3"
+    },
+    "sf_crissy_fort_point/crissy_marsh_history.mp3": {
+      "route_id": "sf_crissy_fort_point",
+      "poi_id": "crissy_marsh",
+      "poi_name": "Crissy Field Marsh",
+      "mode": "history",
+      "script": "[warm] This grassy field was a U.S. Army airfield for most of the twentieth century — biplanes and military transports took off where you're running. [pause] When the Army left in the nineties, the community pulled up the asphalt and rebuilt the tidal marsh by hand. [building] The herons and egrets you might see in the wetland to your right? They came back on their own once the water returned.",
+      "audioFile": "sf_crissy_fort_point/crissy_marsh_history.mp3"
+    },
+    "sf_crissy_fort_point/crissy_marsh_sightseeing.mp3": {
+      "route_id": "sf_crissy_fort_point",
+      "poi_id": "crissy_marsh",
+      "poi_name": "Crissy Field Marsh",
+      "mode": "sightseeing",
+      "script": "[energetic] Look across the water — that's the Golden Gate Bridge framed perfectly ahead, with Alcatraz sitting out in the bay behind you. [amused] On a windy afternoon this whole stretch fills with kitesurfers launching off the beach. It's one of the windiest, most beautiful spots in the city.",
+      "audioFile": "sf_crissy_fort_point/crissy_marsh_sightseeing.mp3"
+    },
+    "sf_crissy_fort_point/warming_hut_food.mp3": {
+      "route_id": "sf_crissy_fort_point",
+      "poi_id": "warming_hut",
+      "poi_name": "Warming Hut",
+      "mode": "food",
+      "script": "[warm] Just ahead is the Warming Hut — a tiny cafe near the foot of the bridge. [pause] Hot chocolate, coffee, soup, and a wall of National Park books. [amused] It's the perfect turnaround treat, and on a cold foggy morning, that's not a want, it's a need.",
+      "audioFile": "sf_crissy_fort_point/warming_hut_food.mp3"
+    },
+    "sf_crissy_fort_point/fort_point_history.mp3": {
+      "route_id": "sf_crissy_fort_point",
+      "poi_id": "fort_point",
+      "poi_name": "Fort Point",
+      "mode": "history",
+      "script": "[storyteller] Fort Point sits directly under the south end of the bridge — a massive brick fortress finished in 1861 to guard the Golden Gate during the Civil War. [pause] Its cannons never fired a shot in battle. When the bridge was designed seventy years later, the engineer Joseph Strauss refused to demolish the fort — he built a special arch over it instead, just to save it. [warm] Stand underneath and look straight up. That arch exists because someone thought this old fort was worth keeping.",
+      "audioFile": "sf_crissy_fort_point/fort_point_history.mp3"
+    },
+    "sf_bridge_lands_end/baker_beach_sightseeing.mp3": {
+      "route_id": "sf_bridge_lands_end",
+      "poi_id": "baker_beach",
+      "poi_name": "Baker Beach",
+      "mode": "sightseeing",
+      "script": "[energetic] Baker Beach gives you the classic shot — the Golden Gate Bridge rising over the surf, the Marin Headlands beyond. [pause] This is the postcard everyone tries to take. [amused] Fun fact: the very first Burning Man happened right here on this beach in 1986, before it moved to the desert.",
+      "audioFile": "sf_bridge_lands_end/baker_beach_sightseeing.mp3"
+    },
+    "sf_bridge_lands_end/lands_end_trail_sightseeing.mp3": {
+      "route_id": "sf_bridge_lands_end",
+      "poi_id": "lands_end_trail",
+      "poi_name": "Lands End",
+      "mode": "sightseeing",
+      "script": "[hushed, awed] This is Lands End — where the city meets the open Pacific. [pause] Look down at the water near the rocks at low tide and you can sometimes spot the ribs of old shipwrecks; this entrance to the bay has claimed dozens of vessels. [building] Cypress trees, crashing surf, and the bridge behind you. There's nowhere else in the city quite like this.",
+      "audioFile": "sf_bridge_lands_end/lands_end_trail_sightseeing.mp3"
+    },
+    "sf_bridge_lands_end/sutro_baths_history.mp3": {
+      "route_id": "sf_bridge_lands_end",
+      "poi_id": "sutro_baths",
+      "poi_name": "Sutro Baths",
+      "mode": "history",
+      "script": "[storyteller] Those concrete ruins below you are the Sutro Baths. [pause] In 1896 a wealthy former mayor named Adolph Sutro built the largest indoor swimming complex in the world right here — seven saltwater pools under a glass roof, room for ten thousand people. [somber] It limped along for decades, then burned down in 1966 while being demolished. The fire left exactly what you see: a haunting concrete maze that fills with the tide.",
+      "audioFile": "sf_bridge_lands_end/sutro_baths_history.mp3"
+    },
+    "sf_presidio_gg_loop/main_post_history.mp3": {
+      "route_id": "sf_presidio_gg_loop",
+      "poi_id": "main_post",
+      "poi_name": "Presidio Main Post",
+      "mode": "history",
+      "script": "[warm, storyteller] The Presidio is one of the oldest places in the city — the Spanish founded a military fort right here in 1776, the same year as the American Revolution. [pause] It stayed an active army base under Spain, Mexico, and then the United States, all the way until 1994. [building] Over two hundred years of soldiers, and now it's a national park you get to run through. The old brick barracks around you are the originals.",
+      "audioFile": "sf_presidio_gg_loop/main_post_history.mp3"
+    },
+    "sf_presidio_gg_loop/presidio_forest_local.mp3": {
+      "route_id": "sf_presidio_gg_loop",
+      "poi_id": "presidio_forest",
+      "poi_name": "Presidio Forest",
+      "mode": "local",
+      "script": "[warm] Here's something most people don't realize — this entire forest is planted. [pause] The Presidio was bare, windswept dunes until the Army planted hundreds of thousands of eucalyptus, pine, and cypress in the late 1800s to make it feel less desolate. [amused] So you're running through a hundred-and-fifty-year-old landscaping project. It worked.",
+      "audioFile": "sf_presidio_gg_loop/presidio_forest_local.mp3"
+    },
+    "sf_presidio_gg_loop/gg_overlook_sightseeing.mp3": {
+      "route_id": "sf_presidio_gg_loop",
+      "poi_id": "gg_overlook",
+      "poi_name": "Golden Gate Overlook",
+      "mode": "sightseeing",
+      "script": "[energetic] You've climbed for this — the Golden Gate Bridge laid out below through the cypress trees. [pause] This overlook catches the bridge at an angle you don't get from the tourist spots. [warm] Take the photo, then enjoy the downhill back toward the start.",
+      "audioFile": "sf_presidio_gg_loop/gg_overlook_sightseeing.mp3"
+    },
+    "sf_the_presidio/tunnel_tops_sightseeing.mp3": {
+      "route_id": "sf_the_presidio",
+      "poi_id": "tunnel_tops",
+      "poi_name": "Presidio Tunnel Tops",
+      "mode": "sightseeing",
+      "script": "[energetic] The green parkland you're running across is called Tunnel Tops — and the name is literal. [pause] It's built on the roof of the highway tunnels below, opened in 2022, turning what was a roaring freeway into rolling lawns with full bridge-and-bay views. [amused] You'd never know there are cars rushing beneath your feet.",
+      "audioFile": "sf_the_presidio/tunnel_tops_sightseeing.mp3"
+    },
+    "sf_the_presidio/the_spire_local.mp3": {
+      "route_id": "sf_the_presidio",
+      "poi_id": "the_spire",
+      "poi_name": "The Spire",
+      "mode": "local",
+      "script": "[hushed] Tucked in the forest near here stands The Spire — a ninety-foot tower built by the artist Andy Goldsworthy from the trunks of cypress trees cleared during the forest's renewal. [pause] As the young trees planted around it grow, they'll slowly swallow the sculpture until it disappears into the canopy. [warm] It's art designed to vanish. Worth a short detour to find it among the trees.",
+      "audioFile": "sf_the_presidio/the_spire_local.mp3"
+    },
+    "sf_the_presidio/main_post_2_history.mp3": {
+      "route_id": "sf_the_presidio",
+      "poi_id": "main_post_2",
+      "poi_name": "Main Post",
+      "mode": "history",
+      "script": "[warm] You're passing the Main Post, the historic core of a military base that ran for over two centuries — Spanish, Mexican, then American, right up to 1994. [pause] The parade ground and brick barracks are all original. It's a national park now, but the bones of an old army town are everywhere you look.",
+      "audioFile": "sf_the_presidio/main_post_2_history.mp3"
+    },
+    "sf_candlestick_mclaren/candlestick_history.mp3": {
+      "route_id": "sf_candlestick_mclaren",
+      "poi_id": "candlestick",
+      "poi_name": "Candlestick Point",
+      "mode": "history",
+      "script": "[warm, storyteller] This windswept point is where Candlestick Park stood — the stadium where the Giants and the 49ers played for decades. [pause] It was famous for being brutally cold and windy; players called night games here miserable. The Beatles played their very last concert here in 1966. [pause] The stadium came down in 2015. Now it's open shoreline again, and the wind hasn't changed a bit.",
+      "audioFile": "sf_candlestick_mclaren/candlestick_history.mp3"
+    },
+    "sf_candlestick_mclaren/candlestick_local.mp3": {
+      "route_id": "sf_candlestick_mclaren",
+      "poi_id": "candlestick",
+      "poi_name": "Candlestick Point",
+      "mode": "local",
+      "script": "[conspiratorial] Almost no tourist ever comes down here, and that's exactly the appeal. [pause] This is the southeast corner of the city — bay breeze, open space, and locals who have the trail to themselves. You're running the real San Francisco that doesn't make the postcards.",
+      "audioFile": "sf_candlestick_mclaren/candlestick_local.mp3"
+    },
+    "sf_candlestick_mclaren/mclaren_park_local.mp3": {
+      "route_id": "sf_candlestick_mclaren",
+      "poi_id": "mclaren_park",
+      "poi_name": "McLaren Park",
+      "mode": "local",
+      "script": "[warm] Climbing into McLaren Park now — at over three hundred acres it's the second-largest park in the city, after Golden Gate Park. [amused] But where Golden Gate Park is always packed, this one stays gloriously empty. [pause] It's named for John McLaren, the gardener who ran Golden Gate Park for over fifty years and planted much of the city's greenery. Locals guard this place as their secret.",
+      "audioFile": "sf_candlestick_mclaren/mclaren_park_local.mp3"
+    },
+    "mumbai_palm_beach_navi/palm_beach_start_sightseeing.mp3": {
+      "route_id": "mumbai_palm_beach_navi",
+      "poi_id": "palm_beach_start",
+      "poi_name": "Palm Beach Road",
+      "mode": "sightseeing",
+      "script": "[energetic] To one side you've got gleaming new high-rises; to the other, open creek and wetland stretching toward the hills. [pause] In the winter months, those wetlands nearby fill with flamingos — thousands of them, turning the mudflats pink. Keep an eye out as you run.",
+      "audioFile": "mumbai_palm_beach_navi/palm_beach_start_sightseeing.mp3"
+    },
+    "mumbai_palm_beach_navi/palm_beach_start_local.mp3": {
+      "route_id": "mumbai_palm_beach_navi",
+      "poi_id": "palm_beach_start",
+      "poi_name": "Palm Beach Road",
+      "mode": "local",
+      "script": "[warm] Welcome to Palm Beach Road — Navi Mumbai's showpiece. [pause] Wide lanes, a planted green median, rows of palms, and none of the chaos of the island city across the creek. [amused] People here proudly call it the Marine Drive of Navi Mumbai. It's flat, smooth, and built for exactly what you're doing right now.",
+      "audioFile": "mumbai_palm_beach_navi/palm_beach_start_local.mp3"
+    },
+    "mumbai_palm_beach_navi/palm_beach_creek_local.mp3": {
+      "route_id": "mumbai_palm_beach_navi",
+      "poi_id": "palm_beach_creek",
+      "poi_name": "Creek Wetlands",
+      "mode": "local",
+      "script": "[warm] This whole side opens onto the creek — one of the reasons the air feels different out here than in the dense city. [pause] Early morning is the magic hour: cool breeze off the water, the road nearly empty, and serious runners and cyclists owning the lanes before the traffic wakes up.",
+      "audioFile": "mumbai_palm_beach_navi/palm_beach_creek_local.mp3"
+    },
+    "mumbai_rajiv_gandhi_joggers/rg_park_gate_local.mp3": {
+      "route_id": "mumbai_rajiv_gandhi_joggers",
+      "poi_id": "rg_park_gate",
+      "poi_name": "Joggers Park",
+      "mode": "local",
+      "script": "[warm] This is the kind of park every Mumbai neighbourhood relies on — a dedicated jogging loop with a soft track that's kind to the knees. [pause] Come at dawn and you'll find the same faces every day: uncles on their morning rounds, walking groups, a yoga circle in the corner. [amused] Do a few laps and you're basically a regular.",
+      "audioFile": "mumbai_rajiv_gandhi_joggers/rg_park_gate_local.mp3"
     },
     "mumbai_bandra/joggers_park_history.mp3": {
       "route_id": "mumbai_bandra_soul",
@@ -544,22 +736,6 @@
       "script": "[warm, satisfied] You're back. Five kilometres along the Arabian Sea. [pause] This run — Joggers Park to Bandra Fort and back — is what serious Bandra runners do every morning. You now know the route. [building] One thing every newcomer learns: Mumbai rewards the early riser. The city at 6am is a different creature from the city at noon. Quieter, kinder, cooler. [warm] You've just seen the best version of Bandra. Remember where to come back.",
       "audioFile": "mumbai_bandra/finish_local.mp3"
     },
-    "mumbai_coastal/sea_link_history.mp3": {
-      "route_id": "mumbai_coastal_promenade",
-      "poi_id": "sea_link_south_tower",
-      "poi_name": "Bandra-Worli Sea Link",
-      "mode": "history",
-      "script": "[building, reverent] The bridge you're standing under took nine years to build and opened in 2009 after one of Mumbai's most fraught infrastructure projects. [pause] Thousands of workers. Multiple contractor disputes. A cost overrun from 1,600 crore to over 16,000 crore. Three workers died in construction accidents. [warm] And then it opened, and Bandra and Worli became neighbours. Mumbai always pays a heavy price for its ambition. The bridge is worth it.",
-      "audioFile": "mumbai_coastal/sea_link_history.mp3"
-    },
-    "mumbai_coastal/sea_link_sightseeing.mp3": {
-      "route_id": "mumbai_coastal_promenade",
-      "poi_id": "sea_link_south_tower",
-      "poi_name": "Bandra-Worli Sea Link",
-      "mode": "sightseeing",
-      "script": "[excited] Look up. You're at the base of one of Mumbai's cable-stayed towers — 128 metres high. [pause] The bridge carries 100,000 vehicles a day. Eight lanes. At night, the cables are lit and the whole thing reflects on the water. [warm] You're about to run one of the most dramatic openings of any run in India. The promenade south from here — sea on your right, Mumbai skyline on your left. [energetic] Let's go.",
-      "audioFile": "mumbai_coastal/sea_link_sightseeing.mp3"
-    },
     "mumbai_coastal/promenade_history.mp3": {
       "route_id": "mumbai_coastal_promenade",
       "poi_id": "promenade_itself",
@@ -623,6 +799,126 @@
       "mode": "local",
       "script": "[conspiratorial] From 5am to 9am and 4pm to 8pm, the Racecourse opens its 2km mud track to the public for running. Free entry. [warm] It's one of the best running surfaces in Mumbai — proper mud, the horses train on the outer track simultaneously, the grandstands are empty and quiet. [amused] You can run laps on the same track as thoroughbreds that race for crores. Very few cities offer that.",
       "audioFile": "mumbai_coastal/racecourse_local.mp3"
+    },
+    "mumbai_bandra_worli/sea_link_history.mp3": {
+      "route_id": "mumbai_bandra_worli_coastal",
+      "poi_id": "bw_sea_link",
+      "poi_name": "Sea Link — Worli Tower",
+      "mode": "history",
+      "script": "[building] The Sea Link was controversial before it was celebrated — fishing communities worried about access, activists worried about the coast. [pause] What opened in twenty twenty-five alongside it is this promenade: pedestrians finally given priority on a waterfront Mumbai had given to cars for decades. [warm] You are running the compromise Mumbai landed on — bridge for traffic, path for people.",
+      "audioFile": "mumbai_bandra_worli/sea_link_history.mp3"
+    },
+    "mumbai_bandra_worli/sea_link_sightseeing.mp3": {
+      "route_id": "mumbai_bandra_worli_coastal",
+      "poi_id": "bw_sea_link",
+      "poi_name": "Sea Link — Worli Tower",
+      "mode": "sightseeing",
+      "script": "[excited, warm] You are at the south tower of the Bandra-Worli Sea Link — one hundred and twenty-eight metres of cable-stayed bridge. [pause] Opened in two thousand nine, it cut the drive from Bandra to Worli from forty-five minutes to five. [building] You cannot run on the bridge itself — but this promenade gives you the view runners have wanted for years. [warm] The full corridor to Bandra is ahead of you, entirely car-free.",
+      "audioFile": "mumbai_bandra_worli/sea_link_sightseeing.mp3"
+    },
+    "mumbai_bandra_worli/koliwada_local.mp3": {
+      "route_id": "mumbai_bandra_worli_coastal",
+      "poi_id": "bw_koliwada",
+      "poi_name": "Worli Koliwada",
+      "mode": "local",
+      "script": "[warm] To your left behind the wall — Worli Koliwada, one of the oldest fishing settlements on this coast. [pause] Nets drying at dawn, boats launching before the city wakes. [building] The Koli were here before Bandra was a suburb, before BKC was marshland, before the Sea Link was imagined. [warm] Corporate towers twenty metres from the slipways — Mumbai in one glance.",
+      "audioFile": "mumbai_bandra_worli/koliwada_local.mp3"
+    },
+    "mumbai_bandra_worli/bandra_food.mp3": {
+      "route_id": "mumbai_bandra_worli_coastal",
+      "poi_id": "bw_bandra_end",
+      "poi_name": "Bandra Reclamation",
+      "mode": "food",
+      "script": "[warm, enthusiastic] Turnaround at Bandra Reclamation — Carter Road is five minutes inland. [pause] SodaBottleOpenerWala, Candies, dozens of cafes on Hill Road. [conspiratorial] Or keep it local: cutting chai from a stall on the promenade before you head back south. [amused] Mumbai runners debate this endlessly. Both options are correct.",
+      "audioFile": "mumbai_bandra_worli/bandra_food.mp3"
+    },
+    "mumbai_bandra_worli/bandra_view.mp3": {
+      "route_id": "mumbai_bandra_worli_coastal",
+      "poi_id": "bw_bandra_end",
+      "poi_name": "Bandra Reclamation",
+      "mode": "sightseeing",
+      "script": "[expansive] From the Bandra end — the Sea Link behind you, the coastal promenade stretching south, the city skyline across the bay. [pause] On a clear morning you can see all the way to Marine Drive. [warm] This is the run that finally connects Bandra and Worli on foot. Turn around when you are ready — same path home.",
+      "audioFile": "mumbai_bandra_worli/bandra_view.mp3"
+    },
+    "mumbai_juhu/morning_local.mp3": {
+      "route_id": "mumbai_juhu_beach",
+      "poi_id": "juhu_north",
+      "poi_name": "Juhu Tara Road",
+      "mode": "local",
+      "script": "[warm, conspiratorial] Early morning Juhu is a different beach from the one tourists see at sunset. [pause] Power walkers, a few serious runners, fishermen, the odd film shoot crew setting up before the heat. [building] By nine AM this becomes one of the most crowded public spaces in India. [warm] You picked the right hour.",
+      "audioFile": "mumbai_juhu/morning_local.mp3"
+    },
+    "mumbai_juhu/chowpatty_food.mp3": {
+      "route_id": "mumbai_juhu_beach",
+      "poi_id": "juhu_mid",
+      "poi_name": "Juhu Chowpatty",
+      "mode": "food",
+      "script": "[warm, enthusiastic] The stalls are still closed if you are early enough. [pause] By eight they will sell bhel puri, sev puri, and gola ice from fifty identical carts. [conspiratorial] The debate over which stall is best has never been resolved and never will be. [amused] Post-run bhel puri on the sand is a Mumbai institution. Worth waiting for.",
+      "audioFile": "mumbai_juhu/chowpatty_food.mp3"
+    },
+    "mumbai_juhu/chowpatty_sightseeing.mp3": {
+      "route_id": "mumbai_juhu_beach",
+      "poi_id": "juhu_mid",
+      "poi_name": "Juhu Chowpatty",
+      "mode": "sightseeing",
+      "script": "[warm, expansive] The main Chowpatty stretch — wide sand, open sea, aircraft descending toward the airport behind you. [pause] On clear days the horizon is empty except for ships. [building] Bollywood has filmed here since the nineteen fifties — if a Mumbai movie needs a beach, it films here. [warm] You are running the set.",
+      "audioFile": "mumbai_juhu/chowpatty_sightseeing.mp3"
+    },
+    "mumbai_danda_versova/tata_history.mp3": {
+      "route_id": "mumbai_danda_versova",
+      "poi_id": "juhu_mid_sand",
+      "poi_name": "Juhu Beach Mid-Stretch",
+      "mode": "history",
+      "script": "[storytelling] Jamsetji Tata's bungalow stood on this beach in the eighteen nineties — before reclamation, before airports. [pause] In 1928 a Tata Air Mail seaplane landed on this sand. [warm] You are running on aviation history and Bollywood backdrops at once.",
+      "audioFile": "mumbai_danda_versova/tata_history.mp3"
+    },
+    "mumbai_danda_versova/bhel_food.mp3": {
+      "route_id": "mumbai_danda_versova",
+      "poi_id": "juhu_mid_sand",
+      "poi_name": "Juhu Beach Mid-Stretch",
+      "mode": "food",
+      "script": "[warm, enthusiastic] The stalls are still closed if you are early enough. [pause] By eight they sell bhel puri from fifty identical carts. [conspiratorial] The debate over which stall is best has never been resolved. [amused] Post-run bhel puri on the sand is a Mumbai institution.",
+      "audioFile": "mumbai_danda_versova/bhel_food.mp3"
+    },
+    "mumbai_danda_versova/iskcon_sightseeing.mp3": {
+      "route_id": "mumbai_danda_versova",
+      "poi_id": "iskcon_view",
+      "poi_name": "ISKCON Juhu",
+      "mode": "sightseeing",
+      "script": "[warm] Inland from the sand — the ISKCON temple dome and the white marble of the Hare Krishna complex. [pause] Bhajans at dawn carry over the beach on still mornings. [building] Juhu is one of the few places where a major temple, a fishing village, and film-star bungalows share the same kilometre of sand.",
+      "audioFile": "mumbai_danda_versova/iskcon_sightseeing.mp3"
+    },
+    "mumbai_danda_versova/versova_local.mp3": {
+      "route_id": "mumbai_danda_versova",
+      "poi_id": "versova_turn",
+      "poi_name": "Versova Sand — Turnaround",
+      "mode": "local",
+      "script": "[conspiratorial] Versova creek is ahead — quieter sand, fewer stalls, more local walkers. [pause] This is a good turnaround if you want ~4.5 km north from Danda. [warm] Same path back — the southbound breeze usually picks up by now. Enjoy it.",
+      "audioFile": "mumbai_danda_versova/versova_local.mp3"
+    },
+    "mumbai_racecourse/track_history.mp3": {
+      "route_id": "mumbai_mahalaxmi_racecourse",
+      "poi_id": "racecourse_main",
+      "poi_name": "Race Course Track",
+      "mode": "history",
+      "script": "[reverent, warm] You are running on the Mahalaxmi Race Course — a two point two kilometre dirt oval that has hosted the Indian Derby since eighteen eighty-three. [pause] Horses train on the inner grass in the morning. Runners get the track for free between five and nine AM. [building] There is no other public running surface like this in Mumbai — open sky, soft dirt, the city skyline around the rim. [warm] Treat it with respect. Leave before the gates close.",
+      "audioFile": "mumbai_racecourse/track_history.mp3"
+    },
+    "mumbai_racecourse/track_local.mp3": {
+      "route_id": "mumbai_mahalaxmi_racecourse",
+      "poi_id": "racecourse_main",
+      "poi_name": "Race Course Track",
+      "mode": "local",
+      "script": "[warm, conspiratorial] The morning track crowd is its own society. [pause] Marathon trainers doing timed laps, aunties power-walking the rail, corporate runners from Lower Parel who discovered this before their colleagues. [building] Everyone knows the hours. Everyone shares the oval. [amused] No headphones police. No lane rules. It just works.",
+      "audioFile": "mumbai_racecourse/track_local.mp3"
+    },
+    "mumbai_racecourse/temple_sightseeing.mp3": {
+      "route_id": "mumbai_mahalaxmi_racecourse",
+      "poi_id": "racecourse_temple",
+      "poi_name": "Mahalaxmi Temple",
+      "mode": "sightseeing",
+      "script": "[warm] The Mahalaxmi Temple sits on the edge of the racecourse — one of Mumbai's oldest shrines to the goddess of wealth. [pause] The name Mahalaxmi names this entire neighbourhood. [building] Temple bells at dawn, horses on the track, the sea a kilometre west — South Mumbai compressed into one morning. [warm] Pause if you need to. The laps will wait.",
+      "audioFile": "mumbai_racecourse/temple_sightseeing.mp3"
     },
     "sf_embarcadero/bay_bridge_history.mp3": {
       "route_id": "sf_embarcadero_loop",
@@ -771,7 +1067,6 @@
   },
   "routes": {
     "sf_gg_park_big_lap": [
-      "sf_gg_park/conservatory_history.mp3",
       "sf_gg_park/bison_local.mp3",
       "sf_gg_park/windmill_history.mp3",
       "sf_gg_park/windmill_food.mp3",
@@ -780,9 +1075,7 @@
     ],
     "sf_ocean_beach": [
       "sf_ocean_beach/great_hwy_history.mp3",
-      "sf_ocean_beach/great_hwy_local.mp3",
-      "sf_ocean_beach/turnaround_food.mp3",
-      "sf_ocean_beach/turnaround_sightseeing.mp3"
+      "sf_ocean_beach/great_hwy_local.mp3"
     ],
     "sf_batteries_to_bluffs": [
       "sf_batteries/chamberlin_history.mp3",
@@ -817,7 +1110,6 @@
       "sf_glen_canyon/twin_peaks_sightseeing.mp3"
     ],
     "mumbai_marine_drive": [
-      "mumbai_marine_drive/nariman_history.mp3",
       "mumbai_marine_drive/midpoint_sightseeing.mp3",
       "mumbai_marine_drive/chowpatty_food.mp3",
       "mumbai_marine_drive/chowpatty_local.mp3"
@@ -836,8 +1128,6 @@
     ],
     "mumbai_worli_seaface": [
       "mumbai_worli/koliwada_history.mp3",
-      "mumbai_worli/sea_link_sightseeing.mp3",
-      "mumbai_worli/sea_link_local.mp3",
       "mumbai_worli/post_run_food.mp3"
     ],
     "mumbai_priyadarshini_park": [
@@ -845,6 +1135,54 @@
       "mumbai_priyadarshini/food.mp3",
       "mumbai_priyadarshini/view_sightseeing.mp3",
       "mumbai_priyadarshini/local.mp3"
+    ],
+    "sf_angel_island": [
+      "sf_angel_island/ayala_cove_history.mp3",
+      "sf_angel_island/ayala_cove_sightseeing.mp3",
+      "sf_angel_island/immigration_station_history.mp3",
+      "sf_angel_island/immigration_station_local.mp3",
+      "sf_angel_island/camp_reynolds_history.mp3"
+    ],
+    "sf_attpark_vista": [
+      "sf_attpark_vista/oracle_park_sightseeing.mp3",
+      "sf_attpark_vista/oracle_park_local.mp3",
+      "sf_attpark_vista/ferry_building_history.mp3",
+      "sf_attpark_vista/ferry_building_food.mp3",
+      "sf_attpark_vista/vista_point_sightseeing.mp3"
+    ],
+    "sf_crissy_fort_point": [
+      "sf_crissy_fort_point/crissy_marsh_history.mp3",
+      "sf_crissy_fort_point/crissy_marsh_sightseeing.mp3",
+      "sf_crissy_fort_point/warming_hut_food.mp3",
+      "sf_crissy_fort_point/fort_point_history.mp3"
+    ],
+    "sf_bridge_lands_end": [
+      "sf_bridge_lands_end/baker_beach_sightseeing.mp3",
+      "sf_bridge_lands_end/lands_end_trail_sightseeing.mp3",
+      "sf_bridge_lands_end/sutro_baths_history.mp3"
+    ],
+    "sf_presidio_gg_loop": [
+      "sf_presidio_gg_loop/main_post_history.mp3",
+      "sf_presidio_gg_loop/presidio_forest_local.mp3",
+      "sf_presidio_gg_loop/gg_overlook_sightseeing.mp3"
+    ],
+    "sf_the_presidio": [
+      "sf_the_presidio/tunnel_tops_sightseeing.mp3",
+      "sf_the_presidio/the_spire_local.mp3",
+      "sf_the_presidio/main_post_2_history.mp3"
+    ],
+    "sf_candlestick_mclaren": [
+      "sf_candlestick_mclaren/candlestick_history.mp3",
+      "sf_candlestick_mclaren/candlestick_local.mp3",
+      "sf_candlestick_mclaren/mclaren_park_local.mp3"
+    ],
+    "mumbai_palm_beach_navi": [
+      "mumbai_palm_beach_navi/palm_beach_start_sightseeing.mp3",
+      "mumbai_palm_beach_navi/palm_beach_start_local.mp3",
+      "mumbai_palm_beach_navi/palm_beach_creek_local.mp3"
+    ],
+    "mumbai_rajiv_gandhi_joggers": [
+      "mumbai_rajiv_gandhi_joggers/rg_park_gate_local.mp3"
     ],
     "mumbai_bandra_soul": [
       "mumbai_bandra/joggers_park_history.mp3",
@@ -865,8 +1203,6 @@
       "mumbai_bandra/finish_local.mp3"
     ],
     "mumbai_coastal_promenade": [
-      "mumbai_coastal/sea_link_history.mp3",
-      "mumbai_coastal/sea_link_sightseeing.mp3",
       "mumbai_coastal/promenade_history.mp3",
       "mumbai_coastal/promenade_sightseeing.mp3",
       "mumbai_coastal/worli_village_history.mp3",
@@ -875,6 +1211,29 @@
       "mumbai_coastal/haji_ali_sightseeing.mp3",
       "mumbai_coastal/racecourse_history.mp3",
       "mumbai_coastal/racecourse_local.mp3"
+    ],
+    "mumbai_bandra_worli_coastal": [
+      "mumbai_bandra_worli/sea_link_history.mp3",
+      "mumbai_bandra_worli/sea_link_sightseeing.mp3",
+      "mumbai_bandra_worli/koliwada_local.mp3",
+      "mumbai_bandra_worli/bandra_food.mp3",
+      "mumbai_bandra_worli/bandra_view.mp3"
+    ],
+    "mumbai_juhu_beach": [
+      "mumbai_juhu/morning_local.mp3",
+      "mumbai_juhu/chowpatty_food.mp3",
+      "mumbai_juhu/chowpatty_sightseeing.mp3"
+    ],
+    "mumbai_danda_versova": [
+      "mumbai_danda_versova/tata_history.mp3",
+      "mumbai_danda_versova/bhel_food.mp3",
+      "mumbai_danda_versova/iskcon_sightseeing.mp3",
+      "mumbai_danda_versova/versova_local.mp3"
+    ],
+    "mumbai_mahalaxmi_racecourse": [
+      "mumbai_racecourse/track_history.mp3",
+      "mumbai_racecourse/track_local.mp3",
+      "mumbai_racecourse/temple_sightseeing.mp3"
     ],
     "sf_embarcadero_loop": [
       "sf_embarcadero/bay_bridge_history.mp3",

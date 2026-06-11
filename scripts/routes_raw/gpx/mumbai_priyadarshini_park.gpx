@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="strava-api">
+<trk><name>PDP Loop</name><trkseg>
+<trkpt lat="18.958020" lon="72.799980"></trkpt>
+<trkpt lat="18.957920" lon="72.799820"></trkpt>
+<trkpt lat="18.957890" lon="72.799740"></trkpt>
+<trkpt lat="18.957900" lon="72.799630"></trkpt>
+<trkpt lat="18.957930" lon="72.799520"></trkpt>
+<trkpt lat="18.957980" lon="72.799440"></trkpt>
+<trkpt lat="18.958060" lon="72.799390"></trkpt>
+<trkpt lat="18.958370" lon="72.799280"></trkpt>
+<trkpt lat="18.958470" lon="72.799320"></trkpt>
+<trkpt lat="18.958590" lon="72.799510"></trkpt>
+<trkpt lat="18.958710" lon="72.799750"></trkpt>
+<trkpt lat="18.958820" lon="72.799900"></trkpt>
+<trkpt lat="18.958970" lon="72.799990"></trkpt>
+<trkpt lat="18.959030" lon="72.800070"></trkpt>
+<trkpt lat="18.959120" lon="72.800120"></trkpt>
+<trkpt lat="18.959440" lon="72.800220"></trkpt>
+<trkpt lat="18.959500" lon="72.800290"></trkpt>
+<trkpt lat="18.959460" lon="72.800490"></trkpt>
+<trkpt lat="18.959400" lon="72.800570"></trkpt>
+<trkpt lat="18.959320" lon="72.800610"></trkpt>
+<trkpt lat="18.959230" lon="72.800600"></trkpt>
+<trkpt lat="18.959150" lon="72.800560"></trkpt>
+<trkpt lat="18.958960" lon="72.800500"></trkpt>
+<trkpt lat="18.958870" lon="72.800500"></trkpt>
+<trkpt lat="18.958680" lon="72.800450"></trkpt>
+<trkpt lat="18.958500" lon="72.800370"></trkpt>
+<trkpt lat="18.958230" lon="72.800200"></trkpt>
+<trkpt lat="18.957980" lon="72.799950"></trkpt>
+</trkseg></trk>
+</gpx>

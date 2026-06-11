@@ -210,22 +210,14 @@ ROUTES = [
 
   {
     "id": "sf_ocean_beach",
-    "path_mode": "direct",  # single road — dense waypoints beat OSM graph detours
+    # OSM corridor along Great Highway only (network mode detours onto side streets)
     "osm": {
       "bbox": (37.728, -122.515, 37.775, -122.505),
-      "names": ["Great Highway", "John Muir Drive"],
+      "names": ["Great Highway"],
     },
     "waypoints": [
       (37.7736, -122.5107),  # Balboa / north end
-      (37.7680, -122.5106),
-      (37.7603, -122.5102),
-      (37.7521, -122.5099),
-      (37.7441, -122.5087),
-      (37.7355, -122.5092),  # Sloat turnaround (~4.2 km south)
-      (37.7441, -122.5087),
-      (37.7521, -122.5099),
-      (37.7603, -122.5102),
-      (37.7680, -122.5106),
+      (37.7355, -122.5092),  # Sloat turnaround
       (37.7736, -122.5107),  # return north
     ],
     "pois": [
@@ -402,23 +394,23 @@ ROUTES = [
     "id": "mumbai_coastal_promenade",
     "path_mode": "exact",
     "osm": {
-      "bbox": (19.035, 72.815, 19.065, 72.842),
-      "names": ["Carter Road", "Bandra", "Reclamation", "Mahim"],
+      "bbox": (18.97, 72.805, 19.02, 72.820),
+      "names": ["Coastal Road", "Promenade", "Worli"],
     },
     "waypoints": [
-      (19.0372, 72.8406),   # Mahim Bay promenade
-      (19.0430, 72.8370),   # Mahim causeway area
-      (19.0484, 72.8312),   # Bandra south (Reclamation)
-      (19.0540, 72.8270),   # Carter Road area
-      (19.0600, 72.8250),   # Bandra Bandstand
-      (19.0620, 72.8183),   # Bandra Fort end
+      (19.0113, 72.8155),   # Worli / Sea Link end — south section start
+      (19.0050, 72.8135),
+      (18.9980, 72.8115),
+      (18.9900, 72.8095),
+      (18.9815, 72.8088),   # Haji Ali approach
+      (19.0113, 72.8155),   # return north
     ],
     "pois": [
-      {"id": "mahim_bay",         "query": "Mahim Bay Mumbai"},
-      {"id": "mahim_church",      "query": "Our Lady of Salvation Mahim Mumbai"},
-      {"id": "bandra_reclamation","query": "Bandra Reclamation Mumbai"},
-      {"id": "sea_link_view",     "query": "Bandra-Worli Sea Link Mumbai"},
-      {"id": "land_end_bandra",   "query": "Land's End Bandra Mumbai"},
+      {"id": "sea_link_south_tower", "query": "Bandra Worli Sea Link Worli end Mumbai"},
+      {"id": "promenade_itself",     "query": "Mumbai Coastal Road Promenade Worli"},
+      {"id": "worli_village",        "query": "Worli Koliwada Mumbai"},
+      {"id": "haji_ali_view",        "query": "Haji Ali Dargah Mumbai"},
+      {"id": "mahalaxmi_racecourse", "query": "Mahalaxmi Race Course Mumbai"},
     ],
   },
 
@@ -528,6 +520,96 @@ ROUTES = [
       {"id": "worli_dairy",       "query": "Worli Dairy Mumbai"},
       {"id": "haji_ali",          "query": "Haji Ali Dargah Mumbai"},
       {"id": "mahalakshmi_temple","query": "Mahalakshmi Temple Mumbai"},
+    ],
+  },
+
+  {
+    "id": "mumbai_bandra_worli_coastal",
+    "osm": {
+      "bbox": (19.00, 72.808, 19.055, 72.842),
+      "names": ["Coastal Road", "Promenade", "Worli", "Bandra"],
+    },
+    "waypoints": [
+      (19.0113, 72.8155),   # Worli / Sea Link end
+      (19.0250, 72.8200),
+      (19.0372, 72.8250),
+      (19.0484, 72.8312),   # Bandra Reclamation
+      (19.0113, 72.8155),   # return
+    ],
+    "pois": [
+      {"id": "sea_link_worli",     "query": "Bandra Worli Sea Link Worli end Mumbai"},
+      {"id": "worli_koliwada",     "query": "Worli Koliwada Mumbai"},
+      {"id": "bandra_reclamation", "query": "Bandra Reclamation Mumbai"},
+      {"id": "carter_road_north",  "query": "Carter Road Bandra Mumbai"},
+    ],
+  },
+
+  {
+    "id": "mumbai_juhu_beach",
+    "path_mode": "exact",
+    "osm": {
+      "bbox": (19.08, 72.822, 19.11, 72.83),
+      "names": ["Juhu Beach"],
+    },
+    "waypoints": [
+      (19.1070, 72.8265),   # Juhu Tara Road / north beach
+      (19.1000, 72.8260),
+      (19.0930, 72.8255),
+      (19.0860, 72.8250),   # south end
+      (19.1070, 72.8265),   # return north
+    ],
+    "pois": [
+      {"id": "juhu_tara",        "query": "Juhu Tara Road Mumbai"},
+      {"id": "juhu_chowpatty",   "query": "Juhu Beach Mumbai"},
+      {"id": "iskcon_juhu",      "query": "ISKCON Juhu Mumbai"},
+      {"id": "juhu_joggers",     "query": "Joggers Park Juhu Mumbai"},
+    ],
+  },
+
+  {
+    "id": "mumbai_danda_versova",
+    "path_mode": "exact",
+    "osm": {
+      "bbox": (19.06, 72.82, 19.12, 72.84),
+      "names": ["Juhu Beach", "Versova"],
+    },
+    "waypoints": [
+      (19.0728, 72.8353),   # Danda Koliwada / south Juhu sand
+      (19.0850, 72.8310),
+      (19.0980, 72.8280),
+      (19.1120, 72.8265),   # north sand toward Versova creek
+      (19.0728, 72.8353),   # return
+    ],
+    "pois": [
+      {"id": "danda_koliwada",   "query": "Danda Beach Juhu Mumbai"},
+      {"id": "juhu_mid_beach",   "query": "Juhu Beach Mumbai"},
+      {"id": "iskcon_juhu",      "query": "ISKCON Juhu Mumbai"},
+      {"id": "versova_sand",     "query": "Versova Beach Mumbai"},
+    ],
+  },
+
+  {
+    "id": "mumbai_mahalaxmi_racecourse",
+    "path_mode": "exact",
+    "osm": {
+      "bbox": (18.978, 72.818, 18.988, 72.828),
+      "names": ["Mahalaxmi Race Course"],
+    },
+    "waypoints": [
+      (18.98320, 72.81980),
+      (18.98080, 72.82150),
+      (18.98020, 72.82420),
+      (18.98150, 72.82650),
+      (18.98400, 72.82700),
+      (18.98600, 72.82550),
+      (18.98650, 72.82300),
+      (18.98550, 72.82050),
+      (18.98320, 72.81980),
+    ],
+    "pois": [
+      {"id": "racecourse_track",  "query": "Mahalaxmi Race Course Mumbai"},
+      {"id": "mahalaxmi_temple",  "query": "Mahalaxmi Temple Mumbai"},
+      {"id": "worli_seaface_near","query": "Worli Sea Face Mumbai"},
     ],
   },
 

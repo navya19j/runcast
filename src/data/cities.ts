@@ -17,6 +17,23 @@ import {
   MUMBAI_WORLI_SEAFACE,
   MUMBAI_PRIYADARSHINI_PARK,
 } from './routes/curated';
+import {
+  MUMBAI_BANDRA_WORLI_COASTAL,
+  MUMBAI_JUHU_BEACH,
+  MUMBAI_DANDA_VERSOVA,
+  MUMBAI_MAHALAXMI_RACECOURSE,
+} from './routes/mumbai_extended';
+import {
+  SF_ANGEL_ISLAND,
+  SF_ATTPARK_VISTA,
+  SF_CRISSY_FORT_POINT,
+  SF_BRIDGE_LANDS_END,
+  SF_PRESIDIO_GG_LOOP,
+  SF_THE_PRESIDIO,
+  SF_CANDLESTICK_MCLAREN,
+  MUMBAI_PALM_BEACH_NAVI,
+  MUMBAI_RAJIV_GANDHI_JOGGERS,
+} from './routes/expansion';
 
 export interface City {
   id: string;
@@ -32,10 +49,28 @@ export interface City {
     longitudeDelta: number;
   };
   routes: Route[];
+  /** Editorial picks — shown first on the home screen */
+  recommendedRouteIds?: string[];
+  /** Paved waterfront routes — named in monsoon weather hints */
+  monsoonPromenadeRouteIds?: string[];
   // Running context hints shown in weather card
   heatWarningAboveC: number;   // city-specific heat threshold
   coldWarningBelowC: number;
   monsoonMonths?: number[];    // months (1-12) with heavy rain risk
+}
+
+export function cityHasMonsoon(city: City): boolean {
+  return (city.monsoonMonths?.length ?? 0) > 0;
+}
+
+/** Paved promenade list wins over per-route flags for monsoon guidance */
+export function resolveMonsoonSafe(
+  route: Route,
+  city: City,
+): boolean | undefined {
+  if (!cityHasMonsoon(city)) return undefined;
+  if (city.monsoonPromenadeRouteIds?.includes(route.id)) return true;
+  return route.monsoonSafe;
 }
 
 export const CITIES: City[] = [
@@ -61,6 +96,19 @@ export const CITIES: City[] = [
       SF_BERNAL_HEIGHTS,
       SF_LANDS_END,
       SF_GLEN_CANYON_TWIN_PEAKS,
+      SF_ANGEL_ISLAND,
+      SF_ATTPARK_VISTA,
+      SF_CRISSY_FORT_POINT,
+      SF_BRIDGE_LANDS_END,
+      SF_PRESIDIO_GG_LOOP,
+      SF_THE_PRESIDIO,
+      SF_CANDLESTICK_MCLAREN,
+    ],
+    recommendedRouteIds: [
+      'sf_embarcadero_loop',
+      'sf_gg_park_big_lap',
+      'sf_lands_end',
+      'sf_batteries_to_bluffs',
     ],
     heatWarningAboveC: 26,
     coldWarningBelowC: 8,
@@ -81,11 +129,30 @@ export const CITIES: City[] = [
     routes: [
       MUMBAI_BANDRA_WATERFRONT,
       MUMBAI_COASTAL_PROMENADE,
+      MUMBAI_BANDRA_WORLI_COASTAL,
       MUMBAI_MARINE_DRIVE,
+      MUMBAI_WORLI_SEAFACE,
+      MUMBAI_MAHALAXMI_RACECOURSE,
+      MUMBAI_JUHU_BEACH,
+      MUMBAI_DANDA_VERSOVA,
       MUMBAI_POWAI_LAKE,
       MUMBAI_SHIVAJI_PARK,
-      MUMBAI_WORLI_SEAFACE,
       MUMBAI_PRIYADARSHINI_PARK,
+      MUMBAI_PALM_BEACH_NAVI,
+      MUMBAI_RAJIV_GANDHI_JOGGERS,
+    ],
+    recommendedRouteIds: [
+      'mumbai_bandra_soul',
+      'mumbai_coastal_promenade',
+      'mumbai_marine_drive',
+      'mumbai_bandra_worli_coastal',
+    ],
+    monsoonPromenadeRouteIds: [
+      'mumbai_marine_drive',
+      'mumbai_worli_seaface',
+      'mumbai_bandra_soul',
+      'mumbai_coastal_promenade',
+      'mumbai_bandra_worli_coastal',
     ],
     heatWarningAboveC: 32,   // Mumbai is always warm — only flag extreme heat
     coldWarningBelowC: 15,

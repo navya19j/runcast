@@ -3,214 +3,212 @@ import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { WeatherData, RunCondition } from '../hooks/useWeather';
 
 interface WeatherBarProps {
-  weather:  WeatherData | null;
-  loading:  boolean;
-  error:    string | null;
-  locationLabel: string;
+  weather: WeatherData | null;
+  loading: boolean;
+  error: string | null;
+  locationLabel?: string;
   subtitle?: string;
+  variant?: 'compact' | 'detail';
+  /** Drop bottom border when nested in a floating card */
+  embedded?: boolean;
 }
-
-// ─── Condition → label + color ────────────────────────────────────────────────
 
 const CONDITION_CONFIG: Record<RunCondition, { label: string; color: string }> = {
-  great: { label: 'Great for running', color: '#5DBF72' },
-  good:  { label: 'Good for running',  color: '#F5A623' },
-  fair:  { label: 'Fair conditions',   color: '#E8890C' },
-  tough: { label: 'Tough conditions',  color: '#FF5252' },
+  great: { label: 'Great', color: '#5DBF72' },
+  good:  { label: 'Good',  color: '#F5A623' },
+  fair:  { label: 'Fair',  color: '#E8890C' },
+  tough: { label: 'Tough', color: '#FF5252' },
 };
 
-// ─── WMO code → minimal weather glyph (text-only, no emoji) ─────────────────
-
-function weatherGlyph(code: number): string {
-  if (code === 0)         return '○';
-  if (code <= 3)          return '◑';
-  if (code <= 48)         return '≈';
-  if (code <= 55)         return '·';
-  if (code <= 65)         return '▽';
-  if (code <= 77)         return '❄';
-  if (code <= 82)         return '▽▽';
-  if (code <= 99)         return '⚡';
-  return '○';
-}
-
-function fmt(n: number, unit: string) {
-  return `${Math.round(n)}${unit}`;
-}
-
-export default function WeatherBar({ weather, loading, error, locationLabel, subtitle }: WeatherBarProps) {
+export default function WeatherBar({
+  weather,
+  loading,
+  error,
+  locationLabel,
+  subtitle,
+  variant = 'detail',
+  embedded = false,
+}: WeatherBarProps) {
   if (loading) {
     return (
-      <View style={styles.container}>
+      <View style={styles.bar}>
         <ActivityIndicator size="small" color="#F5A623" />
-        <Text style={styles.loadingText}>Getting conditions…</Text>
+        <Text style={styles.muted}>Checking weather…</Text>
       </View>
     );
   }
 
   if (error || !weather) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>Weather unavailable</Text>
-      </View>
-    );
+    return null;
   }
 
   const cond = CONDITION_CONFIG[weather.condition];
 
-  return (
-    <View style={styles.container}>
-      {/* Left: temp + glyph + description */}
-      <View style={styles.left}>
-        <Text style={styles.glyph}>{weatherGlyph(weather.weatherCode)}</Text>
-        <View>
-          <Text style={styles.temp}>{fmt(weather.tempC, '°')}</Text>
-          <Text style={styles.desc}>{weather.description}</Text>
-          <Text style={styles.location} numberOfLines={1}>{locationLabel}</Text>
-          {subtitle ? <Text style={styles.subtitle} numberOfLines={1}>{subtitle}</Text> : null}
+  if (variant === 'compact') {
+    return (
+      <View style={[styles.bar, embedded && styles.barEmbedded, styles.barStacked]}>
+        <View style={styles.compactRow}>
+          <View style={styles.compactMain}>
+            <Text style={styles.compactTemp}>{Math.round(weather.tempC)}°</Text>
+            <View style={[styles.pill, { borderColor: cond.color }]}>
+              <Text style={[styles.pillText, { color: cond.color }]}>{cond.label}</Text>
+            </View>
+            {weather.isMonsoon && (
+              <View style={styles.monsoonPill}>
+                <Text style={styles.monsoonPillText}>Monsoon</Text>
+              </View>
+            )}
+          </View>
+          {locationLabel ? (
+            <Text style={styles.compactPlace} numberOfLines={1} ellipsizeMode="tail">
+              {locationLabel}
+            </Text>
+          ) : null}
         </View>
+        <Text style={styles.compactRain} numberOfLines={1}>
+          {weather.rainLabel}
+        </Text>
       </View>
+    );
+  }
 
-      {/* Center divider */}
-      <View style={styles.divider} />
-
-      {/* Center: three quick metrics */}
-      <View style={styles.metrics}>
-        <Metric label="Feels" value={fmt(weather.feelsLikeC, '°')} />
-        <Metric label="Rain"  value={`${Math.round(weather.precipPct)}%`} />
-        <Metric label="Wind"  value={`${Math.round(weather.windKph)} km/h`} />
-        {weather.uvIndex > 0 && (
-          <Metric label="UV" value={String(Math.round(weather.uvIndex))} />
-        )}
-      </View>
-
-      <View style={styles.divider} />
-
-      {/* Right: condition badge + best window */}
-      <View style={styles.right}>
-        {weather.isMonsoon && (
-          <Text style={styles.monsoonAlert}>Monsoon — run on promenades only</Text>
-        )}
-        <View style={[styles.conditionBadge, { borderColor: cond.color }]}>
-          <View style={[styles.conditionDot, { backgroundColor: cond.color }]} />
-          <Text style={[styles.conditionLabel, { color: cond.color }]}>{cond.label}</Text>
-        </View>
-        <Text style={styles.window}>{weather.bestRunWindow}</Text>
-      </View>
-    </View>
-  );
-}
-
-function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <View style={styles.metric}>
-      <Text style={styles.metricValue}>{value}</Text>
-      <Text style={styles.metricLabel}>{label}</Text>
+    <View style={[styles.bar, embedded && styles.barEmbedded]}>
+      <Text style={styles.detailTemp}>{Math.round(weather.tempC)}°</Text>
+      <View style={styles.detailMid}>
+        <View style={styles.detailTopRow}>
+          <Text style={[styles.detailCond, { color: cond.color }]} numberOfLines={1}>
+            {cond.label} for running
+          </Text>
+          {weather.isMonsoon && (
+            <View style={styles.monsoonPill}>
+              <Text style={styles.monsoonPillText}>Monsoon</Text>
+            </View>
+          )}
+        </View>
+        <Text style={styles.detailSub} numberOfLines={2}>
+          Feels {Math.round(weather.feelsLikeC)}° · {weather.rainLabel}
+          {subtitle ? ` · ${subtitle}` : ''}
+        </Text>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  bar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(13,12,10,0.90)',
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    minHeight: 40,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     gap: 10,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255,255,255,0.07)',
   },
-  left: {
+  barEmbedded: {
+    borderBottomWidth: 0,
+    minHeight: 36,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  barStacked: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    gap: 4,
+  },
+  compactRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    minWidth: 0,
   },
-  glyph: {
-    fontSize: 20,
-    color: '#F5A623',
-    width: 22,
-    textAlign: 'center',
+  muted: {
+    color: 'rgba(255,255,255,0.4)',
+    fontSize: 12,
   },
-  temp: {
-    color: '#fff',
-    fontSize: 22,
-    fontWeight: '800',
-    letterSpacing: -0.8,
-    lineHeight: 26,
-  },
-  desc: {
-    color: 'rgba(255,255,255,0.45)',
-    fontSize: 10,
-    fontWeight: '500',
-  },
-  location: {
-    color: 'rgba(255,255,255,0.55)',
-    fontSize: 9,
-    fontWeight: '600',
-    marginTop: 2,
-    maxWidth: 120,
-  },
-  subtitle: {
-    color: 'rgba(245,166,35,0.55)',
-    fontSize: 9,
-    fontWeight: '500',
-    maxWidth: 120,
-  },
-  divider: {
-    width: 1,
-    height: 32,
-    backgroundColor: 'rgba(255,255,255,0.08)',
-  },
-  metrics: {
-    flexDirection: 'row',
-    gap: 10,
-    flex: 1,
-    justifyContent: 'center',
-  },
-  metric: { alignItems: 'center' },
-  metricValue: { color: '#fff', fontSize: 13, fontWeight: '700', letterSpacing: -0.3 },
-  metricLabel: { color: 'rgba(255,255,255,0.35)', fontSize: 9, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.6, marginTop: 1 },
-  right: {
-    alignItems: 'flex-end',
-    gap: 3,
-  },
-  conditionBadge: {
+
+  compactMain: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
+    gap: 8,
+    flexShrink: 1,
+    minWidth: 0,
+  },
+  compactTemp: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '800',
+    width: 36,
+    flexShrink: 0,
+  },
+  pill: {
     borderWidth: 1,
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    flexShrink: 0,
+  },
+  pillText: {
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  compactRain: {
+    color: 'rgba(255,255,255,0.55)',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  monsoonPill: {
+    borderWidth: 1,
+    borderColor: 'rgba(255,82,82,0.45)',
+    backgroundColor: 'rgba(255,82,82,0.1)',
     borderRadius: 6,
     paddingHorizontal: 7,
     paddingVertical: 3,
+    flexShrink: 0,
   },
-  conditionDot: {
-    width: 5,
-    height: 5,
-    borderRadius: 3,
-  },
-  conditionLabel: {
+  monsoonPillText: {
+    color: '#FF5252',
     fontSize: 10,
     fontWeight: '700',
   },
-  window: {
-    color: 'rgba(255,255,255,0.40)',
-    fontSize: 10,
-    fontWeight: '500',
-  },
-  monsoonAlert: {
-    color: '#FF5252',
-    fontSize: 9,
+  compactPlace: {
+    flex: 1,
+    minWidth: 40,
+    textAlign: 'right',
+    color: 'rgba(255,255,255,0.35)',
+    fontSize: 11,
     fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    flexShrink: 1,
   },
-  loadingText: {
-    color: 'rgba(255,255,255,0.4)',
-    fontSize: 12,
-    marginLeft: 8,
+
+  detailTemp: {
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: '800',
+    width: 44,
+    flexShrink: 0,
   },
-  errorText: {
-    color: 'rgba(255,255,255,0.3)',
+  detailMid: {
+    flex: 1,
+    minWidth: 0,
+    justifyContent: 'center',
+    gap: 3,
+  },
+  detailTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    minWidth: 0,
+  },
+  detailCond: {
+    fontSize: 14,
+    fontWeight: '700',
+    flexShrink: 1,
+  },
+  detailSub: {
+    color: 'rgba(255,255,255,0.45)',
     fontSize: 12,
+    lineHeight: 16,
   },
 });

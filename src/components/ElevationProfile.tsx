@@ -86,7 +86,7 @@ export default function ElevationProfile({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#141c28',
+    backgroundColor: '#181612',
     borderTopWidth: 1,
     borderBottomWidth: 1,
     borderColor: 'rgba(255,255,255,0.07)',

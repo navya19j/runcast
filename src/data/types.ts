@@ -21,7 +21,8 @@ export interface POI {
 
 /** Rich metadata sourced from curated_routes.json — all fields optional so existing routes aren't broken */
 export interface RouteMetadata {
-  loop?: boolean;            // true = returns to start, false = point-to-point
+  loop?: boolean;            // true = circular loop, false = point-to-point
+  outAndBack?: boolean;      // same path out and return (overlaps on map)
   elevationGainM?: number;
   surface?: string;
   surfaceQuality?: string;

@@ -3,7 +3,7 @@
  */
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Coordinate } from '../data/types';
-import { distanceMetres } from '../utils/geo';
+import { closestPointOnRoute, distanceMetres } from '../utils/geo';
 
 const TICK_MS = 1000;
 const DEFAULT_SPEED_MPS = 2.8; // ~6 min/km
@@ -59,6 +59,8 @@ export function useSimulatedRun(
   const segIndexRef = useRef(0);
   const segProgressRef = useRef(0);
   const totalDistRef = useRef(0);
+  const manualRef = useRef(false);
+  const [isManual, setIsManual] = useState(false);
   const speed = options?.speedMps ?? DEFAULT_SPEED_MPS;
   const offRoute = options?.offRoute ?? false;
 
@@ -66,6 +68,8 @@ export function useSimulatedRun(
     segIndexRef.current = 0;
     segProgressRef.current = 0;
     totalDistRef.current = 0;
+    manualRef.current = false;
+    setIsManual(false);
     setState({
       position: coords[0] ?? null,
       distanceCoveredM: 0,
@@ -73,10 +77,47 @@ export function useSimulatedRun(
     });
   }, [coords, speed]);
 
+  const setPositionManual = useCallback((coord: Coordinate) => {
+    manualRef.current = true;
+    setIsManual(true);
+    setState(s => ({
+      ...s,
+      position: coord,
+    }));
+  }, []);
+
+  const resumeAutoWalk = useCallback(() => {
+    const pos = state.position;
+    if (!pos || coords.length < 2) {
+      manualRef.current = false;
+      setIsManual(false);
+      return;
+    }
+    const onRoute = closestPointOnRoute(pos, coords);
+    segIndexRef.current = onRoute.segIndex;
+    segProgressRef.current = onRoute.t;
+    totalDistRef.current = onRoute.distanceAlongM;
+    manualRef.current = false;
+    setIsManual(false);
+    setState(s => ({
+      ...s,
+      position: offRoute
+        ? offsetPerpendicular(
+            onRoute.point,
+            bearingDeg(coords[onRoute.segIndex], coords[onRoute.segIndex + 1]),
+            OFF_ROUTE_OFFSET_M,
+          )
+        : onRoute.point,
+      distanceCoveredM: onRoute.distanceAlongM,
+    }));
+  }, [coords, offRoute, state.position]);
+
   useEffect(() => {
     if (!active || coords.length < 2) return;
 
     const interval = setInterval(() => {
+      if (manualRef.current) return;
+
       const i = segIndexRef.current;
       if (i >= coords.length - 1) return;
 
@@ -137,5 +178,11 @@ export function useSimulatedRun(
     if (active) reset();
   }, [active, coords]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return { ...state, reset };
+  return {
+    ...state,
+    reset,
+    isManual,
+    setPositionManual,
+    resumeAutoWalk,
+  };
 }

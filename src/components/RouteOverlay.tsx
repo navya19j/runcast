@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
-import { Polyline } from 'react-native-maps';
+import { Polyline, Circle } from 'react-native-maps';
 import { Route } from '../data/types';
+import { simplifyForMap } from '../utils/geo';
 
 const AMBER = '#F5A623';
 
@@ -24,30 +25,67 @@ function ghostColorForRoute(routeId: string): string {
   return GHOST_PALETTE[hash];
 }
 
-export type RouteMapFocus = 'solo' | 'ghost';
+export type RouteMapFocus = 'solo' | 'ghost' | 'faint';
 
 interface Props {
   route: Route;
   focus: RouteMapFocus;
+  /** Downsample path for city overview maps */
+  maxPoints?: number;
 }
 
-function RouteOverlay({ route, focus }: Props) {
-  const lineCoords = useMemo(
-    () => route.coordinates.map(c => ({ latitude: c.lat, longitude: c.lng })),
-    [route.coordinates],
-  );
+function RouteOverlay({ route, focus, maxPoints }: Props) {
+  const lineCoords = useMemo(() => {
+    const path = maxPoints
+      ? simplifyForMap(route.coordinates, maxPoints)
+      : route.coordinates;
+    return path.map(c => ({ latitude: c.lat, longitude: c.lng }));
+  }, [route.coordinates, maxPoints]);
 
   const isSolo = focus === 'solo';
+  const strokeColor = isSolo
+    ? AMBER
+    : focus === 'faint'
+      ? 'rgba(255,255,255,0.14)'
+      : ghostColorForRoute(route.id);
+  const strokeWidth = isSolo ? 5 : focus === 'faint' ? 1 : 2.5;
+
+  const start = route.startLocation;
+  const end = route.coordinates[route.coordinates.length - 1];
 
   return (
-    <Polyline
-      coordinates={lineCoords}
-      strokeColor={isSolo ? AMBER : ghostColorForRoute(route.id)}
-      strokeWidth={isSolo ? 5 : 2}
-      lineCap="round"
-      lineJoin="round"
-      tappable={false}
-    />
+    <>
+      <Polyline
+        coordinates={lineCoords}
+        strokeColor={strokeColor}
+        strokeWidth={strokeWidth}
+        lineCap="round"
+        lineJoin="round"
+        tappable={false}
+      />
+      {isSolo && (
+        <>
+          <Circle
+            center={{ latitude: start.lat, longitude: start.lng }}
+            radius={18}
+            fillColor={AMBER}
+            strokeColor="#FFFFFF"
+            strokeWidth={2}
+            zIndex={10}
+          />
+          {end && (end.lat !== start.lat || end.lng !== start.lng) && (
+            <Circle
+              center={{ latitude: end.lat, longitude: end.lng }}
+              radius={12}
+              fillColor="rgba(255,255,255,0.92)"
+              strokeColor={AMBER}
+              strokeWidth={2}
+              zIndex={9}
+            />
+          )}
+        </>
+      )}
+    </>
   );
 }
 

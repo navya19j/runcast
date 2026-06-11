@@ -37,11 +37,19 @@ ROUTES_DIR = ROOT / "src" / "data" / "routes"
 LOOP_IDS = {
     "sf_embarcadero_loop",
     "sf_gg_park_big_lap",
-    "sf_ocean_beach",
     "sf_bernal_heights",  # loop in park
     "mumbai_powai_lake",
     "mumbai_shivaji_park",
     "mumbai_priyadarshini_park",
+    "mumbai_mahalaxmi_racecourse",
+}
+
+OUT_AND_BACK_IDS = {
+    "sf_ocean_beach",  # same road south then north — not a circular loop
+    "mumbai_coastal_promenade",  # Worli → Haji Ali and back (south section)
+    "mumbai_bandra_worli_coastal",
+    "mumbai_juhu_beach",
+    "mumbai_danda_versova",
 }
 
 INTERPOLATE_STEP_M = 15
@@ -181,6 +189,28 @@ def patch_distance_km(ts: str, route_id: str, km: float) -> str:
     return ts[: dm.start()] + f"distanceKm: {km:.1f}" + ts[dm.end() :]
 
 
+def patch_out_and_back_flag(ts: str, route_id: str, is_oab: bool) -> str:
+    id_pattern = re.compile(rf"id:\s*['\"]({re.escape(route_id)})['\"]")
+    m = id_pattern.search(ts)
+    if not m:
+        return ts
+    block = ts[m.start() : m.start() + 1200]
+    if is_oab:
+        if re.search(r"\boutAndBack:\s*true", block):
+            return ts
+        dm = re.search(r"\bdistanceKm:\s*[\d.]+", block)
+        if not dm:
+            return ts
+        insert_at = m.start() + dm.end()
+        return ts[:insert_at] + ",\n  outAndBack: true" + ts[insert_at:]
+    return re.sub(
+        rf"(id:\s*['\"]{re.escape(route_id)}['\"][\s\S]{{0,800}}?)outAndBack:\s*true,?\n\s*",
+        r"\1",
+        ts,
+        count=1,
+    )
+
+
 def patch_loop_flag(ts: str, route_id: str, is_loop: bool) -> str:
     id_pattern = re.compile(rf"id:\s*['\"]({re.escape(route_id)})['\"]")
     m = id_pattern.search(ts)
@@ -290,6 +320,7 @@ def fetch_all() -> list[dict]:
                 "pois": {},
                 "path_km": round(km, 1),
                 "loop": rid in LOOP_IDS,
+                "outAndBack": rid in OUT_AND_BACK_IDS,
             }
         )
         if mode not in ("direct",) and "--force" in sys.argv:
@@ -299,7 +330,8 @@ def fetch_all() -> list[dict]:
 
 def patch_files(routes: list[dict]) -> None:
     by_id = {r["id"]: r for r in routes}
-    for ts_file in sorted(ROUTES_DIR.glob("*.ts")):
+    ts_files = sorted(ROUTES_DIR.glob("*.ts"))
+    for ts_file in ts_files:
         print(f"\nPatching {ts_file.name}…")
         ts = ts_file.read_text(encoding="utf-8")
         original = ts
@@ -309,6 +341,7 @@ def patch_files(routes: list[dict]) -> None:
                 ts = patch_start_location(ts, rid, data["startLocation"])
                 ts = patch_distance_km(ts, rid, data["path_km"])
                 ts = patch_loop_flag(ts, rid, data["loop"])
+                ts = patch_out_and_back_flag(ts, rid, data.get("outAndBack", False))
         if ts != original:
             ts_file.write_text(ts, encoding="utf-8")
             print("  ✓ written")

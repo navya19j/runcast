@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
-  ScrollView,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -19,6 +18,11 @@ import ElevationProfile from './src/components/ElevationProfile';
 import HomeScreen from './src/screens/HomeScreen';
 import RouteDetailScreen from './src/screens/RouteDetailScreen';
 import RunCompleteScreen from './src/screens/RunCompleteScreen';
+import RecordScreen from './src/screens/RecordScreen';
+import MyRunsScreen from './src/screens/MyRunsScreen';
+import RecordedRunView from './src/screens/RecordedRunView';
+import SwipeBackScreen from './src/components/SwipeBackScreen';
+import ErrorBoundary from './src/components/ErrorBoundary';
 import { useGPS } from './src/hooks/useGPS';
 import { useSimulatedRun } from './src/hooks/useSimulatedRun';
 import { useAudio } from './src/hooks/useAudio';
@@ -37,13 +41,22 @@ const MODES: { id: Mode; label: string; description: string }[] = [
   { id: 'local',       label: 'Local Life',  description: 'How it really lives'  },
 ];
 
-type AppScreen = 'home' | 'detail' | 'run' | 'complete';
+type AppScreen = 'home' | 'detail' | 'run' | 'complete' | 'record' | 'myruns' | 'myrun';
 
 export default function App() {
+  return (
+    <ErrorBoundary>
+      <AppInner />
+    </ErrorBoundary>
+  );
+}
+
+function AppInner() {
   const [screen, setScreen]           = useState<AppScreen>('home');
   const [activeRoute, setActiveRoute]           = useState<Route>(SF_EMBARCADERO_ROUTE);
-  const [activeCity, setActiveCity]             = useState<City>(CITIES[0]);
+  const [selectedCity, setSelectedCity]         = useState<City>(CITIES[0]);
   const [startOverride, setStartOverride]       = useState<Coordinate | null>(null);
+  const [viewRunId, setViewRunId]               = useState<string | null>(null);
 
   const [runState, setRunState]         = useState<RunState>('idle');
   const [selectedMode, setSelectedMode] = useState<Mode>('sightseeing');
@@ -68,7 +81,7 @@ export default function App() {
   // ── Run completion state (snapshot at stop time) ───────────────────────
   const [finalDistM, setFinalDistM]   = useState(0);
   const [finalSec,   setFinalSec]     = useState(0);
-
+  const [mapFocused, setMapFocused]   = useState(false);
 
   const isActive = runState === 'running';
 
@@ -85,6 +98,9 @@ export default function App() {
     distanceCoveredM: simDistanceM,
     pacingSecPerM: simPace,
     reset: resetSim,
+    isManual: simManual,
+    setPositionManual,
+    resumeAutoWalk,
   } = useSimulatedRun(activeRoute.coordinates, isActive && simulateMode, {
     offRoute: simOffRoute,
   });
@@ -240,7 +256,7 @@ export default function App() {
 
   // Tapping a route card → detail screen (not directly into run)
   const handleSelectRoute = useCallback((city: City, route: Route, start?: Coordinate) => {
-    setActiveCity(city);
+    setSelectedCity(city);
     setActiveRoute(route);
     setStartOverride(start ?? null);
     setRunState('idle');
@@ -248,10 +264,30 @@ export default function App() {
     setScreen('detail');
   }, []);
 
-  // "Start Run" button on detail screen → run screen
   const handleStartFromDetail = useCallback(() => {
+    setMapFocused(false);
     setScreen('run');
+    handleStartRun();
+  }, [handleStartRun]);
+
+  const toggleMapFocus = useCallback(() => {
+    setMapFocused(f => !f);
   }, []);
+
+  const handleSimulateFromDetail = useCallback(() => {
+    setMapFocused(false);
+    setScreen('run');
+    handleStartSimulatedRun();
+  }, [handleStartSimulatedRun]);
+
+  const handleRunBack = useCallback(() => {
+    if (runState !== 'idle') {
+      handleStopAndComplete();
+    } else {
+      setScreen('detail');
+      handleStopRun();
+    }
+  }, [runState, handleStopAndComplete, handleStopRun]);
 
   const formatDistance = (m: number) =>
     m >= 1000 ? `${(m / 1000).toFixed(2)} km` : `${Math.round(m)} m`;
@@ -275,7 +311,49 @@ export default function App() {
   if (screen === 'home') {
     return (
       <GestureHandlerRootView style={styles.root}>
-        <HomeScreen onSelectRoute={handleSelectRoute} />
+        <HomeScreen
+          selectedCity={selectedCity}
+          onCityChange={setSelectedCity}
+          onSelectRoute={handleSelectRoute}
+          onRecord={() => setScreen('record')}
+          onOpenMyRuns={() => setScreen('myruns')}
+        />
+      </GestureHandlerRootView>
+    );
+  }
+
+  if (screen === 'record') {
+    return (
+      <GestureHandlerRootView style={styles.root}>
+        <RecordScreen
+          cityId={selectedCity.id}
+          onCancel={() => setScreen('home')}
+          onDone={(runId) => { setViewRunId(runId); setScreen('myrun'); }}
+        />
+      </GestureHandlerRootView>
+    );
+  }
+
+  if (screen === 'myruns') {
+    return (
+      <GestureHandlerRootView style={styles.root}>
+        <SwipeBackScreen onBack={() => setScreen('home')}>
+          <MyRunsScreen
+            onBack={() => setScreen('home')}
+            onRecord={() => setScreen('record')}
+            onOpen={(runId) => { setViewRunId(runId); setScreen('myrun'); }}
+          />
+        </SwipeBackScreen>
+      </GestureHandlerRootView>
+    );
+  }
+
+  if (screen === 'myrun' && viewRunId) {
+    return (
+      <GestureHandlerRootView style={styles.root}>
+        <SwipeBackScreen onBack={() => setScreen('myruns')}>
+          <RecordedRunView runId={viewRunId} onBack={() => setScreen('myruns')} />
+        </SwipeBackScreen>
       </GestureHandlerRootView>
     );
   }
@@ -283,13 +361,18 @@ export default function App() {
   if (screen === 'detail') {
     return (
       <GestureHandlerRootView style={styles.root}>
-      <RouteDetailScreen
-        route={activeRoute}
-        city={activeCity}
-        startOverride={startOverride}
-        onStart={handleStartFromDetail}
-        onBack={() => setScreen('home')}
-      />
+        <SwipeBackScreen onBack={() => setScreen('home')}>
+          <RouteDetailScreen
+            route={activeRoute}
+            city={selectedCity}
+            startOverride={startOverride}
+            selectedMode={selectedMode}
+            onModeChange={setSelectedMode}
+            onStart={handleStartFromDetail}
+            onSimulate={handleSimulateFromDetail}
+            onBack={() => setScreen('home')}
+          />
+        </SwipeBackScreen>
       </GestureHandlerRootView>
     );
   }
@@ -297,21 +380,24 @@ export default function App() {
   if (screen === 'complete') {
     return (
       <GestureHandlerRootView style={styles.root}>
-      <RunCompleteScreen
-        route={activeRoute}
-        mode={selectedMode}
-        distanceCoveredM={finalDistM}
-        elapsedSec={finalSec}
-        poisHeard={poisHeard}
-        onRunAgain={() => { setScreen('detail'); }}
-        onBackToRoutes={() => { setScreen('home'); }}
-      />
+        <SwipeBackScreen onBack={() => setScreen('home')}>
+          <RunCompleteScreen
+            route={activeRoute}
+            mode={selectedMode}
+            distanceCoveredM={finalDistM}
+            elapsedSec={finalSec}
+            poisHeard={poisHeard}
+            onRunAgain={() => { setScreen('detail'); }}
+            onBackToRoutes={() => { setScreen('home'); }}
+          />
+        </SwipeBackScreen>
       </GestureHandlerRootView>
     );
   }
 
   return (
     <GestureHandlerRootView style={styles.root}>
+    <SwipeBackScreen onBack={handleRunBack}>
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
 
@@ -324,6 +410,9 @@ export default function App() {
           userPosition={position}
           activePOIId={activePOIId}
           startLocation={startOverride ?? activeRoute.startLocation}
+          draggableUser={simulateMode && runState !== 'idle'}
+          onUserPositionChange={simulateMode ? setPositionManual : undefined}
+          onPress={toggleMapFocus}
         />
         <NowPlaying
           audioState={audioState}
@@ -344,7 +433,10 @@ export default function App() {
         )}
 
         {/* Route header + back button */}
-        <View style={styles.routeHeader} pointerEvents="box-none">
+        <View
+          style={[styles.routeHeader, mapFocused && styles.routeHeaderFocused]}
+          pointerEvents="box-none"
+        >
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => {
@@ -352,21 +444,35 @@ export default function App() {
                 handleStopAndComplete();
               } else {
                 setScreen('detail');
+                handleStopRun();
               }
             }}
           >
             <Text style={styles.backButtonText}>
-              {runState !== 'idle' ? '⏹ End Run' : '← Detail'}
+              {runState !== 'idle' ? 'End run' : '← Route'}
             </Text>
           </TouchableOpacity>
-          <Text style={styles.routeCity}>{activeRoute.city.toUpperCase()}</Text>
-          <Text style={styles.routeName}>{activeRoute.name}</Text>
-          <Text style={styles.routeDistance}>{activeRoute.distanceKm} km · {activeRoute.pois.length} landmarks</Text>
+          {!mapFocused && (
+            <>
+              <Text style={styles.routeName}>{activeRoute.name}</Text>
+              <Text style={styles.routeDistance}>{activeRoute.distanceKm} km</Text>
+            </>
+          )}
         </View>
+
+        {mapFocused && (
+          <TouchableOpacity
+            style={styles.mapFocusBar}
+            onPress={toggleMapFocus}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.mapFocusBarText}>Show controls</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* Elevation profile strip */}
-      {elevation && (
+      {elevation && !mapFocused && (
         <ElevationProfile
           elevation={elevation}
           distanceKm={distanceCoveredM / 1000}
@@ -375,6 +481,7 @@ export default function App() {
       )}
 
       {/* Bottom panel */}
+      {!mapFocused && (
       <View style={styles.bottomPanel}>
 
         {/* Live stats when running */}
@@ -406,39 +513,11 @@ export default function App() {
           </View>
         )}
 
-        {/* Mode selector — full picker at idle, compact pill while running */}
-        {runState === 'idle' ? (
-          <>
-            <Text style={styles.sectionLabel}>Your lens</Text>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.modeRow}
-            >
-              {MODES.map(m => (
-                <TouchableOpacity
-                  key={m.id}
-                  style={[styles.modeChip, selectedMode === m.id && styles.modeChipActive]}
-                  onPress={() => setSelectedMode(m.id)}
-                >
-                  <Text style={[styles.modeLabel, selectedMode === m.id && styles.modeLabelActive]}>
-                    {m.label}
-                  </Text>
-                  <Text style={[styles.modeDesc, selectedMode === m.id && styles.modeDescActive]}>
-                    {m.description}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </>
-        ) : (
+        {runState !== 'idle' && (
           <View style={styles.activeModePill}>
             <View style={styles.activeModeIndicator} />
             <Text style={styles.activeModeLabel}>
               {MODES.find(m => m.id === selectedMode)?.label}
-            </Text>
-            <Text style={styles.activeModeDesc}>
-              {MODES.find(m => m.id === selectedMode)?.description}
             </Text>
           </View>
         )}
@@ -449,28 +528,30 @@ export default function App() {
         )}
 
         {simulateMode && runState !== 'idle' && (
-          <TouchableOpacity
-            style={[styles.simToggle, simOffRoute && styles.simToggleActive]}
-            onPress={() => setSimOffRoute(v => !v)}
-          >
-            <Text style={[styles.simToggleText, simOffRoute && styles.simToggleTextActive]}>
-              {simOffRoute ? 'On route again' : 'Drift off route (test)'}
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.simControls}>
+            {simManual && (
+              <TouchableOpacity
+                style={[styles.simToggle, styles.simToggleActive]}
+                onPress={resumeAutoWalk}
+              >
+                <Text style={styles.simToggleTextActive}>Resume auto-walk</Text>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity
+              style={[styles.simToggle, simOffRoute && styles.simToggleActive]}
+              onPress={() => setSimOffRoute(v => !v)}
+            >
+              <Text style={[styles.simToggleText, simOffRoute && styles.simToggleTextActive]}>
+                {simOffRoute ? 'On route again' : 'Drift off route (test)'}
+              </Text>
+            </TouchableOpacity>
+            {!simManual && (
+              <Text style={styles.simHint}>Drag the marker on the map to scrub</Text>
+            )}
+          </View>
         )}
 
-        {/* Action buttons */}
         <View style={styles.actionRow}>
-          {runState === 'idle' && (
-            <>
-              <TouchableOpacity style={styles.primaryButton} onPress={handleStartRun}>
-                <Text style={styles.primaryButtonText}>Start Run</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.simulateButton} onPress={handleStartSimulatedRun}>
-                <Text style={styles.simulateButtonText}>Simulate</Text>
-              </TouchableOpacity>
-            </>
-          )}
           {runState === 'running' && (
             <>
               <TouchableOpacity style={styles.secondaryButton} onPress={handlePauseRun}>
@@ -493,7 +574,9 @@ export default function App() {
           )}
         </View>
       </View>
+      )}
     </SafeAreaView>
+    </SwipeBackScreen>
     </GestureHandlerRootView>
   );
 }
@@ -520,15 +603,21 @@ const styles = StyleSheet.create({
   container:    { flex: 1, backgroundColor: C.bg },
   mapContainer: { flex: 1, position: 'relative', overflow: 'hidden' },
 
-  // Back button
+  // Back button — chip so it stays legible over map tiles
   backButton: {
     alignSelf: 'flex-start',
-    marginBottom: 10,
+    marginBottom: 12,
+    backgroundColor: 'rgba(13,12,10,0.82)',
+    borderRadius: 18,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderWidth: 1,
+    borderColor: C.border,
   },
   backButtonText: {
     color: C.amber,
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: '700',
   },
 
   // Route header — bottom-left overlay, editorial Strava-weight type
@@ -537,6 +626,29 @@ const styles = StyleSheet.create({
     bottom: 18,
     left: 16,
     right: 16,
+  },
+  routeHeaderFocused: {
+    top: 12,
+    bottom: undefined,
+  },
+  mapFocusBar: {
+    position: 'absolute',
+    bottom: 20,
+    alignSelf: 'center',
+    left: 48,
+    right: 48,
+    backgroundColor: 'rgba(13,12,10,0.88)',
+    borderRadius: 22,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderWidth: 1,
+    borderColor: C.border,
+    alignItems: 'center',
+  },
+  mapFocusBarText: {
+    color: C.amber,
+    fontSize: 14,
+    fontWeight: '700',
   },
   routeCity: {
     color: C.amber,
@@ -552,13 +664,19 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     letterSpacing: -0.8,
     lineHeight: 32,
+    textShadowColor: 'rgba(0,0,0,0.9)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 6,
   },
   routeDistance: {
-    color: C.textSecondary,
+    color: 'rgba(255,255,255,0.78)',
     fontSize: 13,
-    fontWeight: '500',
+    fontWeight: '600',
     marginTop: 6,
     letterSpacing: 0.2,
+    textShadowColor: 'rgba(0,0,0,0.9)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 5,
   },
 
   // Bottom panel — Spotify-style frosted shelf
@@ -688,6 +806,15 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '800',
     letterSpacing: 1.4,
+  },
+  simControls: {
+    gap: 8,
+    marginBottom: 4,
+  },
+  simHint: {
+    color: C.textSecondary,
+    fontSize: 12,
+    textAlign: 'center',
   },
   simToggle: {
     backgroundColor: C.surface,

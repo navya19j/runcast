@@ -27,6 +27,60 @@ export function routeLengthMetres(coords: Coordinate[]): number {
   return total;
 }
 
+/** Closest point on a route polyline — for sim scrubbing / resume auto-walk */
+export function closestPointOnRoute(
+  position: Coordinate,
+  coords: Coordinate[],
+): { segIndex: number; t: number; point: Coordinate; distanceAlongM: number } {
+  if (coords.length === 0) {
+    return { segIndex: 0, t: 0, point: position, distanceAlongM: 0 };
+  }
+  if (coords.length === 1) {
+    return { segIndex: 0, t: 0, point: coords[0], distanceAlongM: 0 };
+  }
+
+  const cosLat = Math.cos((position.lat * Math.PI) / 180);
+  let best = {
+    segIndex: 0,
+    t: 0,
+    point: coords[0],
+    distanceAlongM: 0,
+    dist: Infinity,
+  };
+  let alongM = 0;
+
+  for (let i = 0; i < coords.length - 1; i++) {
+    const a = coords[i];
+    const b = coords[i + 1];
+    const segLen = distanceMetres(a, b);
+    const bdx = (b.lng - a.lng) * cosLat;
+    const bdy = b.lat - a.lat;
+    let t = 0;
+    const denom = bdx * bdx + bdy * bdy;
+    if (denom > 1e-14) {
+      const adx = (position.lng - a.lng) * cosLat;
+      const ady = position.lat - a.lat;
+      t = Math.max(0, Math.min(1, (adx * bdx + ady * bdy) / denom));
+    }
+    const point = {
+      lat: a.lat + t * (b.lat - a.lat),
+      lng: a.lng + t * (b.lng - a.lng),
+    };
+    const d = distanceMetres(position, point);
+    if (d < best.dist) {
+      best = { segIndex: i, t, point, distanceAlongM: alongM + t * segLen, dist: d };
+    }
+    alongM += segLen;
+  }
+
+  return {
+    segIndex: best.segIndex,
+    t: best.t,
+    point: best.point,
+    distanceAlongM: best.distanceAlongM,
+  };
+}
+
 /**
  * Returns how far along a route a position is (0-1).
  * Finds the closest segment on the route.
@@ -56,18 +110,24 @@ export function progressAlongRoute(
  * to trigger a clip so it starts playing just before the runner arrives.
  */
 function perpendicularDistance(p: Coordinate, a: Coordinate, b: Coordinate): number {
-  const dx = b.lng - a.lng;
+  // Scale longitude by cos(lat) so the perpendicular distance is computed in
+  // geographic space, not raw degree space.
+  const cosLat = Math.cos((a.lat * Math.PI) / 180);
+  const dx = (b.lng - a.lng) * cosLat;
   const dy = b.lat - a.lat;
   if (dx === 0 && dy === 0) {
-    return Math.hypot(p.lng - a.lng, p.lat - a.lat);
+    return Math.hypot((p.lng - a.lng) * cosLat, p.lat - a.lat);
   }
   const t = Math.max(
     0,
-    Math.min(1, ((p.lng - a.lng) * dx + (p.lat - a.lat) * dy) / (dx * dx + dy * dy)),
+    Math.min(
+      1,
+      ((p.lng - a.lng) * cosLat * dx + (p.lat - a.lat) * dy) / (dx * dx + dy * dy),
+    ),
   );
-  const px = a.lng + t * dx;
-  const py = a.lat + t * dy;
-  return Math.hypot(p.lng - px, p.lat - py);
+  const px = (a.lng + t * (b.lng - a.lng)) * cosLat;
+  const py = a.lat + t * (b.lat - a.lat);
+  return Math.hypot(p.lng * cosLat - px, p.lat - py);
 }
 
 /** Ramer–Douglas–Peucker — preserves corners unlike stride sampling. */
@@ -100,11 +160,16 @@ export function routeRegion(route: Route, padding = 1.45) {
   const maxLat = Math.max(...lats);
   const minLng = Math.min(...lngs);
   const maxLng = Math.max(...lngs);
+  const longitudeDelta = Math.max((maxLng - minLng) * padding, 0.015);
+  // Clamp latitude span to at least half the longitude span so that
+  // wide E-W routes (GGP, Ocean Beach, etc.) don't collapse into
+  // unreadably thin horizontal slivers on the map.
+  const latitudeDelta = Math.max((maxLat - minLat) * padding, longitudeDelta * 0.5, 0.015);
   return {
     latitude: (minLat + maxLat) / 2,
     longitude: (minLng + maxLng) / 2,
-    latitudeDelta: Math.max((maxLat - minLat) * padding, 0.015),
-    longitudeDelta: Math.max((maxLng - minLng) * padding, 0.015),
+    latitudeDelta,
+    longitudeDelta,
   };
 }
 

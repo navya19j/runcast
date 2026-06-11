@@ -10,13 +10,14 @@ import MapView, { MapViewProps } from 'react-native-maps';
 
 interface MapCanvasProps extends MapViewProps {
   containerStyle?: StyleProp<ViewStyle>;
+  onMapReady?: () => void;
 }
 
 /**
  * MapView needs explicit width/height on iOS for reliable pan/zoom gestures.
  */
 const MapCanvas = forwardRef<MapView, MapCanvasProps>(function MapCanvas(
-  { containerStyle, style, children, onLayout: onLayoutProp, ...mapProps },
+  { containerStyle, style, children, onLayout: onLayoutProp, onMapReady, ...mapProps },
   ref,
 ) {
   const [size, setSize] = useState({ width: 0, height: 0 });
@@ -40,6 +41,7 @@ const MapCanvas = forwardRef<MapView, MapCanvasProps>(function MapCanvas(
         <MapView
           ref={ref}
           {...mapProps}
+          onMapReady={onMapReady}
           style={[styles.map, { width: size.width, height: size.height }, style]}
         >
           {children}

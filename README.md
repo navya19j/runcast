@@ -2,7 +2,7 @@
 
 GPS-triggered audio running tours for travel runners. Pick a city route, choose a lens (history, food, sightseeing, local life), and hear narration as you pass landmarks — with light turn-by-turn nudges along the way.
 
-**15 routes** across San Francisco and Mumbai. Your music keeps playing; RunCast ducks it for clips, then hands audio back.
+**18 routes** across San Francisco and Mumbai (8 SF, 10 Mumbai). Your music keeps playing; RunCast ducks it for clips, then hands audio back.
 
 ---
 
@@ -151,10 +151,17 @@ APP="$HOME/Library/Developer/Xcode/DerivedData/RunCast-"*/Build/Products/Release
 xcrun devicectl device install app --device YOUR_DEVICE_UDID "$APP"
 ```
 
-**Shorter alternative** (Expo bundles JS, then builds):
+**Shortcut** (auto-detects a connected iPhone, or uses `IOS_DEVICE_UDID` in `.env`):
 
 ```bash
-cd runcast
+npm run ios:release
+# or with an explicit UDID:
+npm run ios:release -- 00008140-000654C22EFB001C
+```
+
+Equivalent to:
+
+```bash
 npx expo run:ios --device "YOUR_DEVICE_UDID" --configuration Release
 ```
 
@@ -272,10 +279,19 @@ python generate_audio.py --mode sightseeing
 python generate_audio.py --mode all
 ```
 
-Clips land in `assets/audio/{route_folder}/`. Regenerate `src/data/audioAssets.ts`:
+Clips land in `assets/audio/{route_folder}/`. After adding routes or generating clips:
 
 ```bash
-python3 scripts/extract_audio_manifest.py
+npm run audio:manifest   # extract POI scripts → routes_raw/audio_manifest.json
+npm run audio:map        # regenerate src/data/audioAssets.ts from assets/audio/
+```
+
+Free TTS (no API key): `python3 scripts/generate_audio.py --route mumbai_juhu_beach --backend edge`
+
+Sync route metadata from `curated_routes.json` into TypeScript:
+
+```bash
+npm run routes:sync-meta
 ```
 
 ---

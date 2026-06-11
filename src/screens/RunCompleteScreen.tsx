@@ -6,9 +6,15 @@ import {
   StyleSheet,
   SafeAreaView,
   ScrollView,
+  Image,
+  Alert,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Route, Mode } from '../data/types';
+import StarRating from '../components/StarRating';
+import { useRatings } from '../hooks/useRatings';
+import { useRoutePhotos } from '../hooks/useRoutePhotos';
+import type { AddPhotoResult } from '../utils/photosStore';
 
 const C = {
   bg:            '#0D0C0A',
@@ -82,6 +88,25 @@ export default function RunCompleteScreen({
 }: Props) {
   const grade    = completionGrade(distanceCoveredM, route.distanceKm);
   const totalPOI = route.pois.filter(p => !!p.clips[mode]).length;
+  const { routeRating, audioRating, rateRoute, rateAudio } = useRatings();
+  const routeStars = routeRating(route.id) ?? 0;
+  const audioStars = audioRating(route.id, mode) ?? 0;
+  const heardAnyAudio = poisHeard > 0;
+
+  const { photos, capture, pick, remove } = useRoutePhotos(route.id);
+
+  const handleAddResult = (res: AddPhotoResult) => {
+    if (res.ok || res.reason === 'cancelled') return;
+    Alert.alert(
+      res.reason === 'denied' ? 'Permission needed' : "Couldn't add photo",
+      res.reason === 'denied'
+        ? 'Allow camera/photo access in Settings to attach photos.'
+        : 'Something went wrong adding that photo.',
+    );
+  };
+
+  const handleSnap = async () => handleAddResult(await capture());
+  const handlePick = async () => handleAddResult(await pick());
 
   return (
     <SafeAreaView style={styles.container}>
@@ -148,6 +173,63 @@ export default function RunCompleteScreen({
             <Text style={[styles.audioHint, { color: C.green }]}>
               Every story unlocked on this route ✓
             </Text>
+          )}
+        </View>
+
+        {/* ── Rate it ─────────────────────────────────────────────────── */}
+        <View style={styles.rateCard}>
+          <Text style={styles.rateCardTitle}>How was it?</Text>
+          <View style={styles.rateRow}>
+            <Text style={styles.rateLabel}>This route</Text>
+            <StarRating value={routeStars} onRate={n => rateRoute(route.id, n)} size={26} />
+          </View>
+          {heardAnyAudio && (
+            <View style={styles.rateRow}>
+              <Text style={styles.rateLabel}>{MODE_LABELS[mode]} audio</Text>
+              <StarRating value={audioStars} onRate={n => rateAudio(route.id, mode, n)} size={26} />
+            </View>
+          )}
+          {(routeStars > 0 || audioStars > 0) && (
+            <Text style={styles.rateThanks}>Thanks — saved to this device ✓</Text>
+          )}
+        </View>
+
+        {/* ── Capture the run ─────────────────────────────────────────── */}
+        <View style={styles.photoCard}>
+          <View style={styles.photoHeader}>
+            <Text style={styles.photoTitle}>Capture this run</Text>
+            <View style={styles.photoActions}>
+              <TouchableOpacity style={styles.photoBtn} onPress={handleSnap} activeOpacity={0.8}>
+                <Text style={styles.photoBtnText}>📷 Snap</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.photoBtn} onPress={handlePick} activeOpacity={0.8}>
+                <Text style={styles.photoBtnText}>＋ Add</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          {photos.length > 0 ? (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.photoStrip}
+            >
+              {photos.map(uri => (
+                <TouchableOpacity
+                  key={uri}
+                  activeOpacity={0.85}
+                  onLongPress={() =>
+                    Alert.alert('Remove photo', 'Remove this photo from the route?', [
+                      { text: 'Cancel', style: 'cancel' },
+                      { text: 'Remove', style: 'destructive', onPress: () => remove(uri) },
+                    ])
+                  }
+                >
+                  <Image source={{ uri }} style={styles.photoThumb} />
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          ) : (
+            <Text style={styles.photoHint}>Snap a finish-line photo or the view — long-press a photo to remove it.</Text>
           )}
         </View>
 
@@ -280,6 +362,58 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 17,
   },
+
+  // Rate card
+  rateCard: {
+    backgroundColor: C.surface,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: C.border,
+    padding: 16,
+    gap: 12,
+  },
+  rateCardTitle: { color: C.text, fontSize: 14, fontWeight: '700' },
+  rateRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  rateLabel: { color: C.textSecondary, fontSize: 14, fontWeight: '600' },
+  rateThanks: { color: C.green, fontSize: 12, fontWeight: '600' },
+
+  // Photo card
+  photoCard: {
+    backgroundColor: C.surface,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: C.border,
+    padding: 16,
+    gap: 12,
+  },
+  photoHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  photoTitle: { color: C.text, fontSize: 14, fontWeight: '700' },
+  photoActions: { flexDirection: 'row', gap: 8 },
+  photoBtn: {
+    backgroundColor: C.surfaceRaised,
+    borderRadius: 9,
+    borderWidth: 1,
+    borderColor: C.amberBorder,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+  },
+  photoBtnText: { color: C.amber, fontSize: 13, fontWeight: '700' },
+  photoStrip: { gap: 8, paddingRight: 4 },
+  photoThumb: {
+    width: 96,
+    height: 96,
+    borderRadius: 10,
+    backgroundColor: C.surfaceRaised,
+  },
+  photoHint: { color: C.textSecondary, fontSize: 12, lineHeight: 17 },
 
   // Tip card
   tipCard: {

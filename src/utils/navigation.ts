@@ -75,17 +75,24 @@ function projectOntoSegment(
   a: Coordinate,
   b: Coordinate,
 ): { t: number; distM: number } {
-  const dx = b.lng - a.lng;
+  // Scale longitude differences by cos(lat) so the dot-product projection
+  // uses geographic distances rather than raw degrees.  Without this,
+  // E-W segments are over-weighted by ~1/cos(lat) ≈ 27% at SF latitude.
+  const cosLat = Math.cos((a.lat * Math.PI) / 180);
+  const dx = (b.lng - a.lng) * cosLat;
   const dy = b.lat - a.lat;
   if (dx === 0 && dy === 0) {
     return { t: 0, distM: distanceMetres(p, a) };
   }
   const t = Math.max(
     0,
-    Math.min(1, ((p.lng - a.lng) * dx + (p.lat - a.lat) * dy) / (dx * dx + dy * dy)),
+    Math.min(
+      1,
+      ((p.lng - a.lng) * cosLat * dx + (p.lat - a.lat) * dy) / (dx * dx + dy * dy),
+    ),
   );
-  const lat = a.lat + t * dy;
-  const lng = a.lng + t * dx;
+  const lat = a.lat + t * (b.lat - a.lat);
+  const lng = a.lng + t * (b.lng - a.lng);
   return { t, distM: distanceMetres(p, { lat, lng }) };
 }
 
