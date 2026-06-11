@@ -66,7 +66,6 @@ export default function HomeScreen({ onSelectRoute }: HomeScreenProps) {
   const mapRef = useRef<MapView>(null);
   const { height: windowHeight } = useWindowDimensions();
   const mapHeight = Math.round(windowHeight * 0.42);
-  const { weather, loading, error } = useWeather(selectedCity);
 
   const visibleRoutes = useMemo(() => selectedCity.routes.filter(r => {
     if (routeShape === 'loop')    return r.loop === true;
@@ -78,6 +77,12 @@ export default function HomeScreen({ onSelectRoute }: HomeScreenProps) {
     () => visibleRoutes.find(r => r.id === previewRouteId) ?? null,
     [visibleRoutes, previewRouteId],
   );
+
+  const { weather, loading, error } = useWeather({
+    city: selectedCity,
+    at: previewRoute?.startLocation,
+    cacheKey: previewRoute?.id,
+  });
 
   const handlePreviewRoute = (route: Route) => {
     setPreviewRouteId(route.id);
@@ -229,7 +234,8 @@ export default function HomeScreen({ onSelectRoute }: HomeScreenProps) {
         weather={weather}
         loading={loading}
         error={error}
-        cityName={selectedCity.name}
+        locationLabel={previewRoute ? previewRoute.name : selectedCity.name}
+        subtitle={previewRoute ? 'at route start' : 'city overview'}
       />
 
       {/* ── Map ── */}

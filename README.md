@@ -75,14 +75,66 @@ Copy the UDID in parentheses, e.g. `00008140-000654C22EFB001C`.
 
 ---
 
-## Build modes
+## Install standalone app on an iPhone (no Metro)
 
-### 1. Standalone on device (no Metro) — **recommended for real runs**
+Use this when you want RunCast on a real phone **without** keeping a Mac running or starting Metro. The JavaScript bundle is baked into the app at build time (`main.jsbundle`).
 
-Embeds JavaScript in the app (`main.jsbundle`). Works offline from your Mac after install. No dev server at launch.
+### Who needs what
+
+| Role | Needs |
+|------|--------|
+| **Builder** (Mac) | Xcode, CocoaPods, Node, Apple ID in Xcode |
+| **Runner** (iPhone) | USB cable (first install); device registered in builder’s Apple developer account |
+
+- **Free Apple ID:** install to your own devices; builds expire after ~7 days (rebuild to refresh).
+- **Paid Apple Developer Program ($99/yr):** longer-lived installs; share via TestFlight.
+
+### One-time Mac setup
 
 ```bash
-cd ios
+git clone https://github.com/navya19j/runcast.git
+cd runcast
+npm install
+cp .env.example .env          # optional for maps keys; Apple Maps works without them on iOS
+npx expo prebuild --platform ios
+cd ios && pod install && cd ..
+```
+
+If `pod install` fails on `react-native-google-maps`, run prebuild again (`app.config.js` fixes the Podfile) or change `pod 'react-native-google-maps'` → `pod 'react-native-maps'` in `ios/Podfile`.
+
+If the build fails with `Undefined symbols … Sealable`, add to `ios/Podfile.properties.json`:
+
+```json
+{
+  "expo.jsEngine": "hermes",
+  "EXPO_USE_PRECOMPILED_MODULES": "false",
+  "ios.buildReactNativeFromSource": "true"
+}
+```
+
+Then `cd ios && pod install`.
+
+Sign in to Xcode: **Xcode → Settings → Accounts** → add your Apple ID.
+
+### Find your Team ID and device UDID
+
+**Team ID** — Xcode → Settings → Accounts → your Apple ID → Team (ID shown underneath). Xcode also prints it during build: `Auto signing app using team(s): XXXXXXXXXX`.
+
+**Device UDID** — plug in the iPhone, unlock it, then:
+
+```bash
+xcrun xctrace list devices 2>&1 | grep -v Simulator | grep iPhone
+```
+
+Copy the UDID in parentheses, e.g. `00008140-000654C22EFB001C`.
+
+### Build and install (command line)
+
+Replace `YOUR_DEVICE_UDID` and `YOUR_TEAM_ID`.
+
+```bash
+cd runcast/ios
+
 xcodebuild \
   -workspace RunCast.xcworkspace \
   -scheme RunCast \
@@ -90,20 +142,70 @@ xcodebuild \
   -destination 'id=YOUR_DEVICE_UDID' \
   -allowProvisioningUpdates \
   DEVELOPMENT_TEAM=YOUR_TEAM_ID
-
-xcrun devicectl device install app --device YOUR_DEVICE_UDID \
-  "$HOME/Library/Developer/Xcode/DerivedData/RunCast-"*/Build/Products/Release-iphoneos/RunCast.app
 ```
 
-Or via Expo (bundles JS at build time, skips starting Metro):
+When the build finishes:
 
 ```bash
+APP="$HOME/Library/Developer/Xcode/DerivedData/RunCast-"*/Build/Products/Release-iphoneos/RunCast.app
+xcrun devicectl device install app --device YOUR_DEVICE_UDID "$APP"
+```
+
+**Shorter alternative** (Expo bundles JS, then builds):
+
+```bash
+cd runcast
 npx expo run:ios --device "YOUR_DEVICE_UDID" --configuration Release
 ```
 
-**First install:** on the iPhone go to **Settings → General → VPN & Device Management** and trust your developer certificate.
+If signing fails with Expo, use the `xcodebuild` steps above with `-allowProvisioningUpdates`.
 
-### 2. Development build (Metro + hot reload)
+### On the iPhone (first time only)
+
+1. **Unlock** the phone during install.
+2. **Trust the developer:** Settings → General → **VPN & Device Management** (or **Device Management**) → your developer profile → **Trust**.
+3. Open **RunCast** from the home screen.
+
+You do **not** need Metro, Wi‑Fi to your Mac, or `expo start` after this.
+
+### Build and install (Xcode GUI)
+
+1. Open `ios/RunCast.xcworkspace` (not `.xcodeproj`).
+2. Select the physical iPhone in the device dropdown.
+3. **RunCast** target → **Signing & Capabilities** → **Automatically manage signing** → pick your **Team**.
+4. Product → Scheme → Edit Scheme → **Run** → Build Configuration → **Release**.
+5. Product → **Run** (⌘R).
+
+### Verify it’s standalone
+
+- Release builds load `main.jsbundle` from the app bundle (`ios/RunCast/AppDelegate.swift`, `#else` branch).
+- Quit Metro on your Mac, disable Wi‑Fi on the phone, launch RunCast — it should still open.
+- Optional check:
+  ```bash
+  ls -lh ~/Library/Developer/Xcode/DerivedData/RunCast-*/Build/Products/Release-iphoneos/RunCast.app/main.jsbundle
+  ```
+
+### Troubleshooting
+
+| Problem | Fix |
+|---------|-----|
+| `device is locked` | Unlock the iPhone and retry |
+| `profile has not been explicitly trusted` | Settings → VPN & Device Management → Trust |
+| `Provisioning profile doesn't include … device` | Rebuild with `-allowProvisioningUpdates`, or add device UDID in [Apple Developer → Devices](https://developer.apple.com/account/resources/devices/list) |
+| `Sealable` linker error | Set `ios.buildReactNativeFromSource: true` in `Podfile.properties.json` |
+| Redbox / “Could not connect to development server” | You installed **Debug**; rebuild **Release** |
+| App stops opening after ~7 days | Free Apple ID limit — rebuild and reinstall |
+
+### Sharing with someone without a Mac
+
+- **TestFlight** (paid account): `eas build --platform ios --profile production`, then distribute via App Store Connect.
+- **Direct install:** add their device UDID to your developer account, build Release, install with `devicectl` as above.
+
+---
+
+## Other build modes
+
+### Development build (Metro + hot reload)
 
 Phone and Mac must be on the **same Wi‑Fi**.
 
@@ -117,7 +219,7 @@ npx expo run:ios --device "YOUR_DEVICE_UDID"
 
 Debug builds load JS from Metro (`AppDelegate` uses `RCTBundleURLProvider` in `#if DEBUG`).
 
-### 3. Simulator
+### Simulator
 
 ```bash
 npx expo run:ios
@@ -214,6 +316,17 @@ npm install -g eas-cli
 eas login
 eas build --platform ios --profile production
 ```
+
+---
+
+## Weather
+
+Forecasts come from [Open-Meteo](https://open-meteo.com/) using **city-specific** run thresholds (heat, monsoon months for Mumbai).
+
+- **Home screen:** city overview by default; switches to **route start** when you tap a route card to preview it on the map.
+- **Route detail:** conditions at that route’s `startLocation` (not the city center).
+
+Scoring still uses the parent city’s climate rules (e.g. Mumbai monsoon Jun–Sep).
 
 ---
 

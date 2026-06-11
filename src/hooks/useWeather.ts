@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { City } from '../data/cities';
+import { Coordinate } from '../data/types';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export type RunCondition = 'great' | 'good' | 'fair' | 'tough';
 
 export interface HourlySlice {
-  hour: number;        // 0-23 local time
+  hour: number;
   tempC: number;
   precipPct: number;
   condition: RunCondition;
@@ -15,16 +16,28 @@ export interface HourlySlice {
 export interface WeatherData {
   tempC: number;
   feelsLikeC: number;
-  precipPct: number;       // precipitation probability % (next hour)
+  precipPct: number;
   windKph: number;
   uvIndex: number;
-  weatherCode: number;     // WMO weather code
+  weatherCode: number;
   description: string;
   condition: RunCondition;
-  bestRunWindow: string;   // e.g. "Best: 6 – 8 AM" or "Best: 7 – 9 PM"
+  bestRunWindow: string;
   isMonsoon: boolean;
-  fetchedAt: number;       // Date.now()
+  fetchedAt: number;
+  lat: number;
+  lng: number;
 }
+
+export interface UseWeatherOptions {
+  city: City;
+  /** Forecast location — defaults to city center */
+  at?: Coordinate;
+  /** Cache key — use route id when fetching at route start */
+  cacheKey?: string;
+}
+
+type CityThresholds = Pick<City, 'heatWarningAboveC' | 'coldWarningBelowC' | 'monsoonMonths'>;
 
 // ─── WMO weather code → description ──────────────────────────────────────────
 
@@ -42,32 +55,26 @@ function describeCode(code: number): string {
   return 'Unknown';
 }
 
-// ─── Running condition score ──────────────────────────────────────────────────
-// City-aware: Mumbai's normal is 28°C, SF's normal is 16°C
-
 function scoreCondition(
   tempC: number,
   precipPct: number,
   windKph: number,
   uvIndex: number,
-  city: City,
+  city: CityThresholds,
 ): RunCondition {
-  const tempOk  = tempC >= city.coldWarningBelowC && tempC <= city.heatWarningAboveC;
+  const tempOk = tempC >= city.coldWarningBelowC && tempC <= city.heatWarningAboveC;
   const tempWarm = tempC > city.heatWarningAboveC && tempC <= city.heatWarningAboveC + 6;
   const precipOk = precipPct < 25;
-  const windOk   = windKph < 25;
-  const uvOk     = uvIndex < 8;
+  const windOk = windKph < 25;
+  const uvOk = uvIndex < 8;
 
-  if (tempOk && precipOk && windOk && uvOk)   return 'great';
+  if (tempOk && precipOk && windOk && uvOk) return 'great';
   if ((tempOk || tempWarm) && precipOk && windOk) return 'good';
-  if (precipPct < 60 && windKph < 40)         return 'fair';
+  if (precipPct < 60 && windKph < 40) return 'fair';
   return 'tough';
 }
 
-// ─── Find the best 2-hour window to run today ─────────────────────────────────
-
-function findBestWindow(hourly: HourlySlice[], city: City): string {
-  // Prefer early morning (5-9) or evening (18-21) — practical running windows
+function findBestWindow(hourly: HourlySlice[]): string {
   const candidates = hourly.filter(
     h => (h.hour >= 5 && h.hour <= 9) || (h.hour >= 18 && h.hour <= 21),
   );
@@ -75,34 +82,44 @@ function findBestWindow(hourly: HourlySlice[], city: City): string {
 
   const ranked = [...candidates].sort((a, b) => {
     const order: Record<RunCondition, number> = { great: 0, good: 1, fair: 2, tough: 3 };
-    if (order[a.condition] !== order[b.condition])
+    if (order[a.condition] !== order[b.condition]) {
       return order[a.condition] - order[b.condition];
+    }
     return a.precipPct - b.precipPct;
   });
 
   const best = ranked[0];
+  const endHour = best.hour + 2;
   const period = best.hour < 12 ? 'AM' : 'PM';
-  const h12    = best.hour % 12 || 12;
-  const h12end = (best.hour + 2) % 12 || 12;
-  const endPeriod = (best.hour + 2) < 12 ? 'AM' : 'PM';
-  return `Best: ${h12} – ${h12end} ${period === endPeriod ? endPeriod : period + '/' + endPeriod}`;
+  const h12 = best.hour % 12 || 12;
+  const h12end = endHour % 12 || 12;
+  const endPeriod = endHour < 12 ? 'AM' : endHour < 24 && endHour >= 12 ? 'PM' : 'AM';
+  return `Best: ${h12} – ${h12end} ${period === endPeriod ? period : `${period}/${endPeriod}`}`;
 }
 
-// ─── Cache — avoid re-fetching within 30 minutes ─────────────────────────────
+function cacheKeyFor(city: City, at?: Coordinate, cacheKey?: string): string {
+  if (cacheKey) return cacheKey;
+  if (at) {
+    return `${city.id}:${at.lat.toFixed(3)},${at.lng.toFixed(3)}`;
+  }
+  return city.id;
+}
 
 const CACHE_MS = 30 * 60 * 1000;
 const cache = new Map<string, WeatherData>();
 
-// ─── Hook ─────────────────────────────────────────────────────────────────────
+export function useWeather({ city, at, cacheKey }: UseWeatherOptions) {
+  const lat = at?.lat ?? city.lat;
+  const lng = at?.lng ?? city.lng;
+  const key = cacheKeyFor(city, at, cacheKey);
 
-export function useWeather(city: City) {
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError]     = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    const cached = cache.get(city.id);
+    const cached = cache.get(key);
     if (cached && Date.now() - cached.fetchedAt < CACHE_MS) {
       setWeather(cached);
       setLoading(false);
@@ -117,10 +134,10 @@ export function useWeather(city: City) {
     abortRef.current = controller;
 
     const params = new URLSearchParams({
-      latitude:  String(city.lat),
-      longitude: String(city.lng),
-      timezone:  city.timezone,
-      current:   [
+      latitude: String(lat),
+      longitude: String(lng),
+      timezone: city.timezone,
+      current: [
         'temperature_2m',
         'apparent_temperature',
         'precipitation_probability',
@@ -145,16 +162,15 @@ export function useWeather(city: City) {
         return r.json();
       })
       .then(data => {
-        const c    = data.current;
-        const h    = data.hourly;
-        const now  = new Date();
-        const currentMonth = now.getMonth() + 1;
+        const c = data.current;
+        const h = data.hourly;
+        const currentMonth = new Date().getMonth() + 1;
+        const nowHour = new Date().getHours();
 
-        // Build hourly slices for today
         const hourly: HourlySlice[] = (h.time as string[]).map((t: string, i: number) => {
           const hour = new Date(t).getHours();
           const tempC = h.temperature_2m[i] as number;
-          const precipPct = h.precipitation_probability[i] as number;
+          const precipPct = (h.precipitation_probability[i] as number) ?? 0;
           const windKph = h.wind_speed_10m[i] as number;
           const uvIndex = h.uv_index[i] as number;
           return {
@@ -165,11 +181,17 @@ export function useWeather(city: City) {
           };
         });
 
-        const tempC       = c.temperature_2m as number;
-        const feelsLikeC  = c.apparent_temperature as number;
-        const precipPct   = c.precipitation_probability as number;
-        const windKph     = c.wind_speed_10m as number;
-        const uvIndex     = c.uv_index as number;
+        const tempC = c.temperature_2m as number;
+        const feelsLikeC = c.apparent_temperature as number;
+        let precipPct = c.precipitation_probability as number | null;
+        if (precipPct == null && h.time) {
+          const idx = (h.time as string[]).findIndex((t: string) => new Date(t).getHours() === nowHour);
+          if (idx >= 0) precipPct = h.precipitation_probability[idx] as number;
+        }
+        precipPct = precipPct ?? 0;
+
+        const windKph = c.wind_speed_10m as number;
+        const uvIndex = c.uv_index as number;
         const weatherCode = c.weather_code as number;
 
         const isMonsoon = !!(
@@ -184,13 +206,15 @@ export function useWeather(city: City) {
           uvIndex,
           weatherCode,
           description: describeCode(weatherCode),
-          condition:   scoreCondition(tempC, precipPct, windKph, uvIndex, city),
-          bestRunWindow: findBestWindow(hourly, city),
+          condition: scoreCondition(tempC, precipPct, windKph, uvIndex, city),
+          bestRunWindow: findBestWindow(hourly),
           isMonsoon,
           fetchedAt: Date.now(),
+          lat,
+          lng,
         };
 
-        cache.set(city.id, result);
+        cache.set(key, result);
         setWeather(result);
         setLoading(false);
       })
@@ -201,7 +225,15 @@ export function useWeather(city: City) {
       });
 
     return () => controller.abort();
-  }, [city.id]);   // re-fetch only when city changes
+  }, [
+    key,
+    lat,
+    lng,
+    city.timezone,
+    city.heatWarningAboveC,
+    city.coldWarningBelowC,
+    city.monsoonMonths,
+  ]);
 
-  return { weather, loading, error };
+  return { weather, loading, error, atRoute: !!at };
 }

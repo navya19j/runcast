@@ -12,6 +12,8 @@ import { StatusBar } from 'expo-status-bar';
 import MapView, { Polyline, Marker } from 'react-native-maps';
 import { MAP_PROVIDER } from '../utils/mapProvider';
 import MapCanvas from '../components/MapCanvas';
+import WeatherBar from '../components/WeatherBar';
+import { useWeather } from '../hooks/useWeather';
 import { Route, Mode, Coordinate } from '../data/types';
 import { City } from '../data/cities';
 
@@ -107,6 +109,13 @@ export default function RouteDetailScreen({ route, city, startOverride, onStart,
   };
 
   const startCoord = startOverride ?? route.startLocation;
+
+  const { weather, loading: weatherLoading, error: weatherError } = useWeather({
+    city,
+    at: startCoord,
+    cacheKey: route.id,
+  });
+
   const lineCoords = useMemo(
     () => route.coordinates.map(c => ({ latitude: c.lat, longitude: c.lng })),
     [route.coordinates],
@@ -173,6 +182,14 @@ export default function RouteDetailScreen({ route, city, startOverride, onStart,
       </View>
 
       {/* ── Scrollable detail body ───────────────────────────────────────── */}
+      <WeatherBar
+        weather={weather}
+        loading={weatherLoading}
+        error={weatherError}
+        locationLabel={route.name}
+        subtitle="Conditions at route start"
+      />
+
       <ScrollView
         style={styles.body}
         contentContainerStyle={styles.bodyContent}

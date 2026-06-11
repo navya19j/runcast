@@ -6,7 +6,8 @@ interface WeatherBarProps {
   weather:  WeatherData | null;
   loading:  boolean;
   error:    string | null;
-  cityName: string;
+  locationLabel: string;
+  subtitle?: string;
 }
 
 // ─── Condition → label + color ────────────────────────────────────────────────
@@ -36,7 +37,7 @@ function fmt(n: number, unit: string) {
   return `${Math.round(n)}${unit}`;
 }
 
-export default function WeatherBar({ weather, loading, error, cityName }: WeatherBarProps) {
+export default function WeatherBar({ weather, loading, error, locationLabel, subtitle }: WeatherBarProps) {
   if (loading) {
     return (
       <View style={styles.container}>
@@ -64,6 +65,8 @@ export default function WeatherBar({ weather, loading, error, cityName }: Weathe
         <View>
           <Text style={styles.temp}>{fmt(weather.tempC, '°')}</Text>
           <Text style={styles.desc}>{weather.description}</Text>
+          <Text style={styles.location} numberOfLines={1}>{locationLabel}</Text>
+          {subtitle ? <Text style={styles.subtitle} numberOfLines={1}>{subtitle}</Text> : null}
         </View>
       </View>
 
@@ -139,6 +142,19 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.45)',
     fontSize: 10,
     fontWeight: '500',
+  },
+  location: {
+    color: 'rgba(255,255,255,0.55)',
+    fontSize: 9,
+    fontWeight: '600',
+    marginTop: 2,
+    maxWidth: 120,
+  },
+  subtitle: {
+    color: 'rgba(245,166,35,0.55)',
+    fontSize: 9,
+    fontWeight: '500',
+    maxWidth: 120,
   },
   divider: {
     width: 1,
