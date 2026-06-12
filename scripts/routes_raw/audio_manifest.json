@@ -56,6 +56,22 @@
       "script": "[conspiratorial] The wind is almost always behind you on the way back. [pause] SF's prevailing wind comes from the northwest — off the Pacific, across the dunes. The locals know to run south first, into the headwind, and let it carry them home. [warm] You chose correctly. Or you didn't and you're suffering. Either way — you're now one of the people who knows.",
       "audioFile": "sf_ocean_beach/great_hwy_local.mp3"
     },
+    "sf_ocean_beach/great_walkway_local.mp3": {
+      "route_id": "sf_ocean_beach",
+      "poi_id": "great_walkway",
+      "poi_name": "The Great Walkway",
+      "mode": "local",
+      "script": "[warm] The road beside you — the old Great Highway — is now the Great Walkway. [pause] San Franciscans voted in 2024 to make this oceanfront stretch permanently car-free, turning four lanes of traffic into one of the largest car-free spaces in the country. [amused] Runners, cyclists, skaters, kids — with the whole Pacific as the backdrop.",
+      "audioFile": "sf_ocean_beach/great_walkway_local.mp3"
+    },
+    "sf_ocean_beach/ocean_beach_north_sightseeing.mp3": {
+      "route_id": "sf_ocean_beach",
+      "poi_id": "ocean_beach_north",
+      "poi_name": "Ocean Beach North",
+      "mode": "sightseeing",
+      "script": "[energetic] The north end, below the old Cliff House and the ruins of the Sutro Baths. [pause] Ocean Beach runs more than three miles — the city's longest — straight into serious Pacific swells. There are almost always surfers out in the lineup, wetsuited against the cold.",
+      "audioFile": "sf_ocean_beach/ocean_beach_north_sightseeing.mp3"
+    },
     "sf_batteries/chamberlin_history.mp3": {
       "route_id": "sf_batteries_to_bluffs",
       "poi_id": "battery_chamberlin",
@@ -159,6 +175,22 @@
       "mode": "local",
       "script": "[warm, amused] The hill is off-leash dog territory by longstanding Bernal tradition. [pause] There are sometimes more dogs than humans up here. The regulars all know each other's dogs by name — often before they know each other's names. [conspiratorial] Bernal Heights has a genuine village-in-a-city quality that most SF neighbourhoods have lost. The summit is its town square.",
       "audioFile": "sf_bernal/summit_local.mp3"
+    },
+    "sf_bernal/bernal_views_sightseeing.mp3": {
+      "route_id": "sf_bernal_heights",
+      "poi_id": "bernal_views",
+      "poi_name": "Bernal Summit Views",
+      "mode": "sightseeing",
+      "script": "[triumphant] A full 360 from up here — downtown's towers, the Bay, Sutro Tower, Twin Peaks, the hills beyond. [pause] One of the best free viewpoints in all of San Francisco, and you ran up to earn every degree of it.",
+      "audioFile": "sf_bernal/bernal_views_sightseeing.mp3"
+    },
+    "sf_bernal/bernal_local_local.mp3": {
+      "route_id": "sf_bernal_heights",
+      "poi_id": "bernal_local",
+      "poi_name": "Bernal Mountain",
+      "mode": "local",
+      "script": "[warm, amused] Locals call this Bernal Mountain, and it belongs to the dogs — off-leash, all day. [pause] At dawn and dusk the summit fills with neighbours and runners, and there's a famous unofficial rope swing people keep rebuilding every time the city takes it down.",
+      "audioFile": "sf_bernal/bernal_local_local.mp3"
     },
     "sf_lands_end/overlook_sightseeing.mp3": {
       "route_id": "sf_lands_end",
@@ -320,6 +352,22 @@
       "script": "[warm, conspiratorial] The morning crowd here is Mumbai at its most civic. [pause] Retired professionals, school-age athletes, aunties in saris doing power walks, personal trainers running clients through drills, cricketers doing catching practice. Everyone sharing the same perimeter at the same hour. [amused] No one has assigned lanes. No one is in charge. It works perfectly. [warm] This is the model for how a city shares public space. Shivaji Park at 6am.",
       "audioFile": "mumbai_shivaji/morning_local.mp3"
     },
+    "mumbai_shivaji/shivaji_statue_history.mp3": {
+      "route_id": "mumbai_shivaji_park",
+      "poi_id": "shivaji_statue",
+      "poi_name": "Shivaji Statue & Cricket Nurseries",
+      "mode": "history",
+      "script": "[warm, storyteller] This maidan is the cradle of Indian cricket. [pause] On these pitches the coaching nurseries trained Sachin Tendulkar, Sunil Gavaskar, and generations of greats. It's named for Chhatrapati Shivaji Maharaj, whose statue presides over it — and Dadar around you is the beating heart of Marathi Mumbai.",
+      "audioFile": "mumbai_shivaji/shivaji_statue_history.mp3"
+    },
+    "mumbai_shivaji/shivaji_katta_local.mp3": {
+      "route_id": "mumbai_shivaji_park",
+      "poi_id": "shivaji_katta",
+      "poi_name": "The Morning Maidan",
+      "mode": "local",
+      "script": "[warm] At dawn the whole maidan is alive — laughter clubs, walking groups, kids at cricket coaching, old-timers on the kattas. [conspiratorial] This is no tourist park. It's where Dadar actually lives, every single morning.",
+      "audioFile": "mumbai_shivaji/shivaji_katta_local.mp3"
+    },
     "mumbai_worli/koliwada_history.mp3": {
       "route_id": "mumbai_worli_seaface",
       "poi_id": "worli_koliwada",
@@ -367,6 +415,14 @@
       "mode": "local",
       "script": "[warm, conspiratorial] Priyadarshini Park has a specific morning population. [pause] Retired professionals from Malabar Hill's residential towers. A few serious runners doing laps before the hill residents wake up. The Parsi aunties who have been doing the same circuit at the same time since 1985 and will outlast everyone else here. [building] Malabar Hill is the most expensive residential address in India. The Chief Minister lives on this ridge. [amused] The morning park crowd has absolutely no interest in any of that. They're here for the sea air and the gossip. Same as everywhere else.",
       "audioFile": "mumbai_priyadarshini/local.mp3"
+    },
+    "mumbai_priyadarshini/pdp_seafront_sightseeing.mp3": {
+      "route_id": "mumbai_priyadarshini_park",
+      "poi_id": "pdp_seafront",
+      "poi_name": "Malabar Hill Seafront",
+      "mode": "sightseeing",
+      "script": "[warm] Priyadarshini Park sits right on the Malabar Hill seafront, the Arabian Sea breaking on the rocks just below. [pause] A rare pocket of green-and-blue calm in one of Mumbai's most exclusive neighbourhoods — a soft track, a sports complex, and an endless sea horizon.",
+      "audioFile": "mumbai_priyadarshini/pdp_seafront_sightseeing.mp3"
     },
     "sf_angel_island/ayala_cove_history.mp3": {
       "route_id": "sf_angel_island",
@@ -607,6 +663,70 @@
       "mode": "local",
       "script": "[warm] This is the kind of park every Mumbai neighbourhood relies on — a dedicated jogging loop with a soft track that's kind to the knees. [pause] Come at dawn and you'll find the same faces every day: uncles on their morning rounds, walking groups, a yoga circle in the corner. [amused] Do a few laps and you're basically a regular.",
       "audioFile": "mumbai_rajiv_gandhi_joggers/rg_park_gate_local.mp3"
+    },
+    "mumbai_rajiv_gandhi_joggers/rg_garden_sightseeing.mp3": {
+      "route_id": "mumbai_rajiv_gandhi_joggers",
+      "poi_id": "rg_garden",
+      "poi_name": "Garden Loop",
+      "mode": "sightseeing",
+      "script": "[warm] The loop winds through landscaped gardens — manicured lawns, shade trees, and the planned calm Navi Mumbai was built for. [pause] The kind of green breathing space the crowded island city across the creek rarely manages.",
+      "audioFile": "mumbai_rajiv_gandhi_joggers/rg_garden_sightseeing.mp3"
+    },
+    "sf_lake_merced/boathouse_history.mp3": {
+      "route_id": "sf_lake_merced",
+      "poi_id": "boathouse",
+      "poi_name": "Lake Merced Boathouse",
+      "mode": "history",
+      "script": "[warm] Lake Merced is a freshwater lake — rare for a coastal city — and it was San Francisco's original drinking-water reservoir back in the 1800s, before the city reached out to the Sierra. [pause] Today it's all recreation: rowing crews slicing across at dawn, anglers after stocked trout, and runners like you doing laps on the flattest long loop in town.",
+      "audioFile": "sf_lake_merced/boathouse_history.mp3"
+    },
+    "sf_lake_merced/boathouse_local.mp3": {
+      "route_id": "sf_lake_merced",
+      "poi_id": "boathouse",
+      "poi_name": "Lake Merced Boathouse",
+      "mode": "local",
+      "script": "[conspiratorial] This is where the city's serious runners come to train — no hills, no traffic lights, no tourists. [pause] You'll see the same crews and track clubs here every weekend morning, grinding out tempo loops. It's San Francisco's open secret for actually getting fit.",
+      "audioFile": "sf_lake_merced/boathouse_local.mp3"
+    },
+    "sf_lake_merced/harding_park_sightseeing.mp3": {
+      "route_id": "sf_lake_merced",
+      "poi_id": "harding_park",
+      "poi_name": "Harding Park",
+      "mode": "sightseeing",
+      "script": "[energetic] Those manicured fairways and tall cypress trees across the water are Harding Park — TPC Harding Park, a championship public golf course. [pause] In 2020 it hosted the PGA Championship, one of golf's majors, right here on the lake shore. You're running the perimeter of a major-championship venue.",
+      "audioFile": "sf_lake_merced/harding_park_sightseeing.mp3"
+    },
+    "sf_lake_merced/lm_southwest_sightseeing.mp3": {
+      "route_id": "sf_lake_merced",
+      "poi_id": "lm_southwest",
+      "poi_name": "Southwest Shore",
+      "mode": "sightseeing",
+      "script": "[warm] The far side of the loop opens up — water on one side, the green of the golf course and Fort Funston's bluffs beyond. [pause] On a clear evening the light comes low across the lake and the whole place glows. This stretch is why locals keep coming back.",
+      "audioFile": "sf_lake_merced/lm_southwest_sightseeing.mp3"
+    },
+    "mumbai_bandstand/bandstand_amphi_sightseeing.mp3": {
+      "route_id": "mumbai_bandstand",
+      "poi_id": "bandstand_amphi",
+      "poi_name": "Bandstand Amphitheatre",
+      "mode": "sightseeing",
+      "script": "[energetic] The Arabian Sea is right there over the rocks, and on a clear day you can see the Bandra-Worli Sea Link sweeping south. [pause] Sunset here is a Mumbai institution — the sky goes orange and the whole promenade stops to watch.",
+      "audioFile": "mumbai_bandstand/bandstand_amphi_sightseeing.mp3"
+    },
+    "mumbai_bandstand/bandstand_amphi_local.mp3": {
+      "route_id": "mumbai_bandstand",
+      "poi_id": "bandstand_amphi",
+      "poi_name": "Bandstand Amphitheatre",
+      "mode": "local",
+      "script": "[warm] Welcome to Bandstand — by the numbers, the most-run stretch in all of Mumbai, with thousands of people every single day. [pause] Built out on reclaimed rock along the sea, the promenade and its little amphitheatre fill every evening: walkers, couples, fitness boot-camps, and kids on the rocks watching the waves. This is Bandra's living room.",
+      "audioFile": "mumbai_bandstand/bandstand_amphi_local.mp3"
+    },
+    "mumbai_bandstand/mannat_local.mp3": {
+      "route_id": "mumbai_bandstand",
+      "poi_id": "mannat",
+      "poi_name": "Mannat",
+      "mode": "local",
+      "script": "[conspiratorial] That sea-facing mansion is Mannat — Shah Rukh Khan's home, and probably the most-photographed house in India. [pause] There are almost always fans gathered at the gate hoping for a wave from the balcony. You just ran past Bollywood royalty's front door.",
+      "audioFile": "mumbai_bandstand/mannat_local.mp3"
     },
     "mumbai_bandra/joggers_park_history.mp3": {
       "route_id": "mumbai_bandra_soul",
@@ -1075,7 +1195,9 @@
     ],
     "sf_ocean_beach": [
       "sf_ocean_beach/great_hwy_history.mp3",
-      "sf_ocean_beach/great_hwy_local.mp3"
+      "sf_ocean_beach/great_hwy_local.mp3",
+      "sf_ocean_beach/great_walkway_local.mp3",
+      "sf_ocean_beach/ocean_beach_north_sightseeing.mp3"
     ],
     "sf_batteries_to_bluffs": [
       "sf_batteries/chamberlin_history.mp3",
@@ -1094,7 +1216,9 @@
       "sf_bernal/summit_history.mp3",
       "sf_bernal/summit_food.mp3",
       "sf_bernal/summit_sightseeing.mp3",
-      "sf_bernal/summit_local.mp3"
+      "sf_bernal/summit_local.mp3",
+      "sf_bernal/bernal_views_sightseeing.mp3",
+      "sf_bernal/bernal_local_local.mp3"
     ],
     "sf_lands_end": [
       "sf_lands_end/overlook_sightseeing.mp3",
@@ -1124,7 +1248,9 @@
       "mumbai_shivaji/cricket_history.mp3",
       "mumbai_shivaji/food.mp3",
       "mumbai_shivaji/sightseeing.mp3",
-      "mumbai_shivaji/morning_local.mp3"
+      "mumbai_shivaji/morning_local.mp3",
+      "mumbai_shivaji/shivaji_statue_history.mp3",
+      "mumbai_shivaji/shivaji_katta_local.mp3"
     ],
     "mumbai_worli_seaface": [
       "mumbai_worli/koliwada_history.mp3",
@@ -1134,7 +1260,8 @@
       "mumbai_priyadarshini/towers_history.mp3",
       "mumbai_priyadarshini/food.mp3",
       "mumbai_priyadarshini/view_sightseeing.mp3",
-      "mumbai_priyadarshini/local.mp3"
+      "mumbai_priyadarshini/local.mp3",
+      "mumbai_priyadarshini/pdp_seafront_sightseeing.mp3"
     ],
     "sf_angel_island": [
       "sf_angel_island/ayala_cove_history.mp3",
@@ -1182,7 +1309,19 @@
       "mumbai_palm_beach_navi/palm_beach_creek_local.mp3"
     ],
     "mumbai_rajiv_gandhi_joggers": [
-      "mumbai_rajiv_gandhi_joggers/rg_park_gate_local.mp3"
+      "mumbai_rajiv_gandhi_joggers/rg_park_gate_local.mp3",
+      "mumbai_rajiv_gandhi_joggers/rg_garden_sightseeing.mp3"
+    ],
+    "sf_lake_merced": [
+      "sf_lake_merced/boathouse_history.mp3",
+      "sf_lake_merced/boathouse_local.mp3",
+      "sf_lake_merced/harding_park_sightseeing.mp3",
+      "sf_lake_merced/lm_southwest_sightseeing.mp3"
+    ],
+    "mumbai_bandstand": [
+      "mumbai_bandstand/bandstand_amphi_sightseeing.mp3",
+      "mumbai_bandstand/bandstand_amphi_local.mp3",
+      "mumbai_bandstand/mannat_local.mp3"
     ],
     "mumbai_bandra_soul": [
       "mumbai_bandra/joggers_park_history.mp3",

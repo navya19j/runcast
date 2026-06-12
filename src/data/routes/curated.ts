@@ -1388,6 +1388,34 @@ export const SF_OCEAN_BEACH: Route = {
         },
       },
     },
+    {
+      id: 'great_walkway',
+      name: "The Great Walkway",
+      location: { lat: 37.756580, lng: -122.509310 },
+      triggerDistanceM: 60,
+      clips: {
+        local: {
+          script:
+            "[warm] The road beside you — the old Great Highway — is now the Great Walkway. [pause] San Franciscans voted in 2024 to make this oceanfront stretch permanently car-free, turning four lanes of traffic into one of the largest car-free spaces in the country. [amused] Runners, cyclists, skaters, kids — with the whole Pacific as the backdrop.",
+          audioFile: 'sf_ocean_beach/great_walkway_local.mp3',
+          durationSec: 22,
+        },
+      },
+    },
+    {
+      id: 'ocean_beach_north',
+      name: "Ocean Beach North",
+      location: { lat: 37.773170, lng: -122.510750 },
+      triggerDistanceM: 60,
+      clips: {
+        sightseeing: {
+          script:
+            "[energetic] The north end, below the old Cliff House and the ruins of the Sutro Baths. [pause] Ocean Beach runs more than three miles — the city's longest — straight into serious Pacific swells. There are almost always surfers out in the lineup, wetsuited against the cold.",
+          audioFile: 'sf_ocean_beach/ocean_beach_north_sightseeing.mp3',
+          durationSec: 18,
+        },
+      },
+    },
   ],
 };
 
@@ -3284,6 +3312,34 @@ export const SF_BERNAL_HEIGHTS: Route = {
             "[enthusiastic, warm] Descending the south side — Precita Park Cafe is fifteen minutes' walk on Precita Avenue. [pause] Neighbourhood spot. The kind of place where the regulars have their coffee order memorised by the staff. [conspiratorial] La Lengua on Valencia is twenty minutes further — Mexican brunch, genuinely excellent. [warm] Bernal Heights has a lot of strong opinions about breakfast. Most of them are correct. You've just run 95 metres of climbing. You've earned whichever one you choose.",
           audioFile: 'sf_bernal/summit_food.mp3',
           durationSec: 30,
+        },
+      },
+    },
+    {
+      id: 'bernal_views',
+      name: "Bernal Summit Views",
+      location: { lat: 37.742320, lng: -122.412070 },
+      triggerDistanceM: 60,
+      clips: {
+        sightseeing: {
+          script:
+            "[triumphant] A full 360 from up here — downtown's towers, the Bay, Sutro Tower, Twin Peaks, the hills beyond. [pause] One of the best free viewpoints in all of San Francisco, and you ran up to earn every degree of it.",
+          audioFile: 'sf_bernal/bernal_views_sightseeing.mp3',
+          durationSec: 16,
+        },
+      },
+    },
+    {
+      id: 'bernal_local',
+      name: "Bernal Mountain",
+      location: { lat: 37.742283, lng: -122.412290 },
+      triggerDistanceM: 60,
+      clips: {
+        local: {
+          script:
+            "[warm, amused] Locals call this Bernal Mountain, and it belongs to the dogs — off-leash, all day. [pause] At dawn and dusk the summit fills with neighbours and runners, and there's a famous unofficial rope swing people keep rebuilding every time the city takes it down.",
+          audioFile: 'sf_bernal/bernal_local_local.mp3',
+          durationSec: 19,
         },
       },
     },
@@ -5727,6 +5783,34 @@ export const MUMBAI_SHIVAJI_PARK: Route = {
         },
       },
     },
+    {
+      id: 'shivaji_statue',
+      name: "Shivaji Statue & Cricket Nurseries",
+      location: { lat: 19.028290, lng: 72.839560 },
+      triggerDistanceM: 60,
+      clips: {
+        history: {
+          script:
+            "[warm, storyteller] This maidan is the cradle of Indian cricket. [pause] On these pitches the coaching nurseries trained Sachin Tendulkar, Sunil Gavaskar, and generations of greats. It's named for Chhatrapati Shivaji Maharaj, whose statue presides over it — and Dadar around you is the beating heart of Marathi Mumbai.",
+          audioFile: 'mumbai_shivaji/shivaji_statue_history.mp3',
+          durationSec: 20,
+        },
+      },
+    },
+    {
+      id: 'shivaji_katta',
+      name: "The Morning Maidan",
+      location: { lat: 19.026000, lng: 72.836610 },
+      triggerDistanceM: 60,
+      clips: {
+        local: {
+          script:
+            "[warm] At dawn the whole maidan is alive — laughter clubs, walking groups, kids at cricket coaching, old-timers on the kattas. [conspiratorial] This is no tourist park. It's where Dadar actually lives, every single morning.",
+          audioFile: 'mumbai_shivaji/shivaji_katta_local.mp3',
+          durationSec: 15,
+        },
+      },
+    },
   ],
 };
 
@@ -6055,6 +6139,20 @@ export const MUMBAI_PRIYADARSHINI_PARK: Route = {
             "[warm, conspiratorial] Priyadarshini Park has a specific morning population. [pause] Retired professionals from Malabar Hill's residential towers. A few serious runners doing laps before the hill residents wake up. The Parsi aunties who have been doing the same circuit at the same time since 1985 and will outlast everyone else here. [building] Malabar Hill is the most expensive residential address in India. The Chief Minister lives on this ridge. [amused] The morning park crowd has absolutely no interest in any of that. They're here for the sea air and the gossip. Same as everywhere else.",
           audioFile: 'mumbai_priyadarshini/local.mp3',
           durationSec: 32,
+        },
+      },
+    },
+    {
+      id: 'pdp_seafront',
+      name: "Malabar Hill Seafront",
+      location: { lat: 18.958370, lng: 72.799280 },
+      triggerDistanceM: 60,
+      clips: {
+        sightseeing: {
+          script:
+            "[warm] Priyadarshini Park sits right on the Malabar Hill seafront, the Arabian Sea breaking on the rocks just below. [pause] A rare pocket of green-and-blue calm in one of Mumbai's most exclusive neighbourhoods — a soft track, a sports complex, and an endless sea horizon.",
+          audioFile: 'mumbai_priyadarshini/pdp_seafront_sightseeing.mp3',
+          durationSec: 19,
         },
       },
     },

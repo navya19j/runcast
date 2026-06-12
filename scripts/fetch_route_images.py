@@ -55,6 +55,8 @@ ROUTE_TITLES = {
     "sf_candlestick_mclaren":    ["John McLaren Park", "Candlestick Point"],
     "mumbai_palm_beach_navi":    ["Palm Beach Road", "Navi Mumbai"],
     "mumbai_rajiv_gandhi_joggers": ["Vashi", "Navi Mumbai"],
+    "sf_lake_merced":            ["Lake Merced"],
+    "mumbai_bandstand":          ["Bandstand, Mumbai", "Bandra Fort", "Bandra"],
 }
 
 

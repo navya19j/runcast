@@ -31,8 +31,10 @@ import {
   SF_PRESIDIO_GG_LOOP,
   SF_THE_PRESIDIO,
   SF_CANDLESTICK_MCLAREN,
+  SF_LAKE_MERCED,
   MUMBAI_PALM_BEACH_NAVI,
   MUMBAI_RAJIV_GANDHI_JOGGERS,
+  MUMBAI_BANDSTAND,
 } from './routes/expansion';
 
 export interface City {
@@ -103,6 +105,7 @@ export const CITIES: City[] = [
       SF_PRESIDIO_GG_LOOP,
       SF_THE_PRESIDIO,
       SF_CANDLESTICK_MCLAREN,
+      SF_LAKE_MERCED,
     ],
     recommendedRouteIds: [
       'sf_embarcadero_loop',
@@ -140,6 +143,7 @@ export const CITIES: City[] = [
       MUMBAI_PRIYADARSHINI_PARK,
       MUMBAI_PALM_BEACH_NAVI,
       MUMBAI_RAJIV_GANDHI_JOGGERS,
+      MUMBAI_BANDSTAND,
     ],
     recommendedRouteIds: [
       'mumbai_bandra_soul',
